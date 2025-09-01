@@ -1,0 +1,54 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainer.schema.json",
+  "name": "gin-rummy-scoreboard",
+  "runArgs": [
+    "--name",
+    "gin-rummy-scoreboard-${devcontainerId}"
+  ],
+  "mounts": [
+    "type=volume,target=${containerWorkspaceFolder}/node_modules,source=gin-rummy-scoreboard-node-modules",
+    "type=volume,target=/home/ubuntu/.cache/pnpm,source=gin-rummy-scoreboard-pnpm-store"
+  ],
+  "postCreateCommand": "sudo chown -Rf ubuntu node_modules /home/ubuntu/.cache/pnpm && (pnpm install --frozen-lockfile || true)",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [
+    8080
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "files.exclude": {
+          ".devcontainer": true,
+          ".update_devcontainer.sh": true
+        },
+        "terminal.integrated.defaultProfile.linux": "tmux",
+        "terminal.integrated.profiles.linux": {
+          "tmux": {
+            "path": "/tmux-or-else.sh"
+          }
+        }
+      },
+      "extensions": [
+        "Vue.volar",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "streetsidesoftware.code-spell-checker",
+        "bierner.markdown-preview-github-styles",
+        "bierner.markdown-mermaid",
+        "github.vscode-github-actions",
+        "yzhang.markdown-all-in-one",
+        "redhat.vscode-yaml",
+        "aaron-bond.better-comments",
+        "peakchen90.open-html-in-browser"
+      ]
+    }
+  },
+  "containerEnv": {
+    "DCC_BINARY": "",
+    "DCC_REPL": "",
+    "DCC_VERSION": "node --version; pnpm --version; vue --version"
+  }
+}

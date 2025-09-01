@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/dhhyi/devcontainer-creator/dist/language_schema.json
+extends: dcc://javascript-pnpm
+language:
+  name: vue.js
+  version: |
+    node --version
+    pnpm --version
+    vue --version
+devcontainer:
+  name: gin-rummy-scoreboard
+  build:
+    user:
+      - RUN pnpm i -g @vue/cli
+  instantiate: (pnpm install --frozen-lockfile || true)
+  ports:
+    - 8080
+extras:
+  - named-volumes
+  - tmux
+namedVolumes:
+  node_modules: gin-rummy-scoreboard-node-modules
+  $HOME/.cache/pnpm: gin-rummy-scoreboard-pnpm-store
+vscode:
+  extensions:
+    - Vue.volar
+    - esbenp.prettier-vscode
+    - bradlc.vscode-tailwindcss
+    - streetsidesoftware.code-spell-checker
+    - bierner.markdown-preview-github-styles
+    - bierner.markdown-mermaid
+    - github.vscode-github-actions
+    - yzhang.markdown-all-in-one
+    - redhat.vscode-yaml
+    - aaron-bond.better-comments
+    - peakchen90.open-html-in-browser
+  settings:
+    editor.defaultFormatter: esbenp.prettier-vscode
