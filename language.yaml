@@ -6,7 +6,6 @@ language:
     java -version
     node --version
     pnpm --version
-    vue --version
 devcontainer:
   name: gin-rummy-scoreboard
   build:
@@ -24,7 +23,7 @@ devcontainer:
           java -jar /opt/svg2png.jar "$@"
   instantiate: (pnpm install --frozen-lockfile || true)
   ports:
-    - 8080
+    - 5173
   selftest: |
     svg2png
 extras:

@@ -1,43 +1,22 @@
 {
-  "name": "gin-rummy-scoreboard",
-  "version": "0.1.0",
+  "name": "vite-project",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "generate-icons": "svg2png -c svg2png.config.json -n '' -f src/assets/gin-rummy-scoreboard.svg",
-    "generate": "pnpm run generate-icons",
-    "preserve": "pnpm run generate",
-    "serve": "vue-cli-service serve",
-    "prebuild": "pnpm run generate",
-    "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "dev": "vite --host 0.0.0.0",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "register-service-worker": "^1.7.2",
-    "vue": "^3.2.13"
+    "vue": "^3.5.18"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.15",
-    "@types/mocha": "^8.2.1",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-pwa": "~5.0.0",
-    "@vue/cli-plugin-typescript": "~5.0.0",
-    "@vue/cli-plugin-unit-mocha": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "@vue/eslint-config-typescript": "^9.1.0",
-    "@vue/test-utils": "^2.0.0-0",
-    "chai": "^4.2.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "lint-staged": "^11.1.2",
-    "prettier": "^2.4.1",
-    "typescript": "~4.5.5"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.8.3",
+    "vite": "^7.1.2",
+    "vue-tsc": "^3.0.5"
   }
 }

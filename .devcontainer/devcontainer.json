@@ -14,7 +14,7 @@
     "dockerfile": "Dockerfile"
   },
   "forwardPorts": [
-    8080
+    5173
   ],
   "customizations": {
     "vscode": {
@@ -50,6 +50,6 @@
     "DCC_BINARY": "",
     "DCC_REPL": "",
     "DCC_SELFTEST": "c3ZnMnBuZwo=",
-    "DCC_VERSION": "java -version; node --version; pnpm --version; vue --version"
+    "DCC_VERSION": "java -version; node --version; pnpm --version"
   }
 }

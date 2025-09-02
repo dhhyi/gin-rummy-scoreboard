@@ -14,4 +14,4 @@ USER ubuntu
 
 RUN pnpm i -g @vue/cli
 
-EXPOSE 8080
+EXPOSE 5173
