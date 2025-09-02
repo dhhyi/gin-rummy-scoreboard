@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
   --breakpoint-*: initial;
   --breakpoint-big: 400px;
@@ -14,7 +12,24 @@
 }
 
 @layer components {
+  h1 {
+    @apply text-xl font-bold;
+  }
+
+  h2 {
+    @apply text-lg;
+  }
+
   button {
     @apply rounded border-2 border-black bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 active:bg-blue-800 dark:border-white dark:text-gray-200;
+  }
+
+  button:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  input[type="text"],
+  input[type="number"] {
+    @apply rounded border-2 border-black bg-white px-4 py-2 font-bold text-gray-900 placeholder:text-gray-400 placeholder:italic focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-white dark:bg-blue-950 dark:text-gray-200;
   }
 }
