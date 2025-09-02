@@ -47,3 +47,6 @@ vscode:
     - peakchen90.open-html-in-browser
   settings:
     editor.defaultFormatter: esbenp.prettier-vscode
+    emmet.includeLanguages:
+      vue-html: html
+      vue: html

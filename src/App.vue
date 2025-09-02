@@ -1,19 +1,11 @@
-<script setup lang="ts">
-import HelloWorld from "./components/HelloWorld.vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <img alt="Vue logo" src="./assets/gin-rummy-scoreboard.svg" width="120" />
-  <HelloWorld msg="Gin Rummy Scoreboard" />
+  <div class="flex flex-col items-center gap-4">
+    <img alt="Vue logo" src="./assets/gin-rummy-scoreboard.svg" width="200" />
+    <h1 class="text-xl font-bold">Gin Rummy Scoreboard</h1>
+    <button>New Game</button>
+  </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>

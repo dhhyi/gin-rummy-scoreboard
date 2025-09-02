@@ -20,6 +20,10 @@
     "vscode": {
       "settings": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "emmet.includeLanguages": {
+          "vue": "html",
+          "vue-html": "html"
+        },
         "files.exclude": {
           ".devcontainer": true,
           ".update_devcontainer.sh": true
