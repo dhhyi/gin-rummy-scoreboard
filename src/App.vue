@@ -1,6 +1,6 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Test" />
+  <img alt="Vue logo" src="./assets/gin-rummy-scoreboard.svg" width="120" />
+  <HelloWorld msg="Gin Rummy Scoreboard" />
 </template>
 
 <script lang="ts">

@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "generate-icons": "svg2png -c svg2png.config.json -n '' -f src/assets/gin-rummy-scoreboard.svg",
+    "generate": "pnpm run generate-icons",
+    "preserve": "pnpm run generate",
     "serve": "vue-cli-service serve",
+    "prebuild": "pnpm run generate",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"

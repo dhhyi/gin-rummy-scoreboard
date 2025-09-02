@@ -3,17 +3,30 @@ extends: dcc://javascript-pnpm
 language:
   name: vue.js
   version: |
+    java -version
     node --version
     pnpm --version
     vue --version
 devcontainer:
   name: gin-rummy-scoreboard
   build:
+    packages:
+      - openjdk-21-jre-headless
+    root:
+      - RUN wget -qO- https://github.com/sterlp/svg2png/releases/download/v1.2.1/svg2png-1.2.1.jar -O /opt/svg2png.jar
     user:
       - RUN pnpm i -g @vue/cli
+    files:
+      - type: script
+        path: /usr/local/bin/svg2png
+        content: |
+          #!/bin/bash
+          java -jar /opt/svg2png.jar "$@"
   instantiate: (pnpm install --frozen-lockfile || true)
   ports:
     - 8080
+  selftest: |
+    svg2png
 extras:
   - named-volumes
   - tmux

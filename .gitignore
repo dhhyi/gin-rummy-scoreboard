@@ -2,6 +2,9 @@
 node_modules
 /dist
 
+# generated files
+/public/favicon.*
+/public/img/icons/*
 
 # local env files
 .env.local

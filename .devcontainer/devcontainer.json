@@ -49,6 +49,7 @@
   "containerEnv": {
     "DCC_BINARY": "",
     "DCC_REPL": "",
-    "DCC_VERSION": "node --version; pnpm --version; vue --version"
+    "DCC_SELFTEST": "c3ZnMnBuZwo=",
+    "DCC_VERSION": "java -version; node --version; pnpm --version; vue --version"
   }
 }

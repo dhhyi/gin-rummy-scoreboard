@@ -1,0 +1,100 @@
+{
+  "files": [
+    {
+      "directory": "public/",
+      "nameSuffix": "favicon",
+      "height": 32,
+      "width": 32
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "android-chrome-maskable-192x192",
+      "height": 192,
+      "width": 192
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "android-chrome-maskable-512x512",
+      "height": 512,
+      "width": 512
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "android-chrome-192x192",
+      "height": 192,
+      "width": 192
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "android-chrome-512x512",
+      "height": 512,
+      "width": 512
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "apple-touch-icon-60x60",
+      "height": 60,
+      "width": 60
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "apple-touch-icon-76x76",
+      "height": 76,
+      "width": 76
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "apple-touch-icon-120x120",
+      "height": 120,
+      "width": 120
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "apple-touch-icon-152x152",
+      "height": 152,
+      "width": 152
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "apple-touch-icon-180x180",
+      "height": 180,
+      "width": 180
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "apple-touch-icon",
+      "height": 180,
+      "width": 180
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "favicon-48x48",
+      "height": 48,
+      "width": 48
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "favicon-16x16",
+      "height": 16,
+      "width": 16
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "favicon-32x32",
+      "height": 32,
+      "width": 32
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "msapplication-icon-144x144",
+      "height": 144,
+      "width": 144
+    },
+    {
+      "directory": "public/img/icons/",
+      "nameSuffix": "mstile-150x150",
+      "height": 150,
+      "width": 150
+    }
+  ]
+}
