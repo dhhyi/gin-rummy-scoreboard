@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { type Context, getScoreForPlayer } from "../game-machine";
 
 const props = defineProps({
@@ -13,11 +14,22 @@ const emit = defineEmits<{
 function score(player: 1 | 2) {
   return getScoreForPlayer(player, props.context);
 }
+
+const dealer =
+  props.context.rounds % 2 === 0
+    ? props.context.playerOne
+    : props.context.playerTwo;
+
+const ended = ref(false);
+const round = props.context.rounds + 1;
 </script>
 
 <template>
-  <h1>Spiel läuft</h1>
-  <div class="flex flex-col gap-8">
+  <h1 v-if="!ended">Runde {{ round }} läuft</h1>
+  <h1 v-else>Runde {{ round }} beendet</h1>
+  <h2 v-if="!ended">{{ dealer }} muss geben.</h2>
+  <button v-if="!ended" @click="ended = true">Spiel beenden</button>
+  <div v-if="ended" class="flex flex-col gap-8">
     <h2>Wer hat das Spiel beendet?</h2>
     <button @click="emit('player-one-ends')">
       {{ context.playerOne }} ({{ score(1) }})
