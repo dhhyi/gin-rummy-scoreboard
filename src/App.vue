@@ -1,28 +1,13 @@
 <script setup lang="ts">
-import { useMachine } from "@xstate/vue";
 import CountDeadWood from "./components/CountDeadWood.vue";
 import GameIdle from "./components/GameIdle.vue";
 import GameOver from "./components/GameOver.vue";
 import GameRunning from "./components/GameRunning.vue";
 import RoundEndSelection from "./components/RoundEndSelection.vue";
 import SelectNames from "./components/SelectNames.vue";
-import { gameMachine } from "./game-machine";
+import { setupGameMachine } from "./game-machine";
 
-const stateString = localStorage.getItem("state");
-const saved = stateString ? JSON.parse(stateString) : undefined;
-
-const { snapshot, send, actorRef } = useMachine(gameMachine, {
-  snapshot: saved,
-});
-
-actorRef.subscribe(() => {
-  const persistedState = actorRef.getPersistedSnapshot();
-  localStorage.setItem("state", JSON.stringify(persistedState));
-});
-
-function startGame(n1: string, n2: string) {
-  send({ type: "start-game", one: n1, two: n2 });
-}
+const { send, snapshot } = setupGameMachine();
 </script>
 
 <template>
@@ -32,7 +17,7 @@ function startGame(n1: string, n2: string) {
   />
   <SelectNames
     v-else-if="snapshot.matches('playerSelection')"
-    @start-game="startGame"
+    @start-game="(one, two) => send({ type: 'start-game', one, two })"
   />
   <GameRunning
     v-else-if="snapshot.matches('running')"

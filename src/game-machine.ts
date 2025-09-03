@@ -1,3 +1,4 @@
+import { useMachine } from "@xstate/vue";
 import { assign, setup } from "xstate";
 
 export interface Context {
@@ -48,7 +49,7 @@ export function getScoreForPlayer(player: 1 | 2, context: Context) {
     }, 0);
 }
 
-export const gameMachine = setup({
+const gameMachine = setup({
   types: {
     context: createContext(),
     events: {} as Events,
@@ -254,3 +255,20 @@ export const gameMachine = setup({
     },
   },
 });
+
+export function setupGameMachine() {
+  const localStorageKey = "gin-rummy-scoreboard-state";
+  const stateString = localStorage.getItem(localStorageKey);
+  const saved = stateString ? JSON.parse(stateString) : undefined;
+
+  const { snapshot, send, actorRef } = useMachine(gameMachine, {
+    snapshot: saved,
+  });
+
+  actorRef.subscribe(() => {
+    const persistedState = actorRef.getPersistedSnapshot();
+    localStorage.setItem(localStorageKey, JSON.stringify(persistedState));
+  });
+
+  return { snapshot, send };
+}
