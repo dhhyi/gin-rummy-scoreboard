@@ -1,14 +1,16 @@
 import { useMachine } from "@xstate/vue";
 import { assign, setup } from "xstate";
 
+type Scoring = {
+  round: number;
+  player: 1 | 2;
+  score: "undercut" | "gin" | "big-gin" | number;
+};
+
 export interface Context {
   playerOne: string | null;
   playerTwo: string | null;
-  scoring: {
-    round: number;
-    player: 1 | 2;
-    score: "undercut" | "gin" | "big-gin" | number;
-  }[];
+  scoring: Scoring[];
   rounds: number;
   roundEndedBy?: 1 | 2;
   firstPlayerDeadWood?: number;
@@ -35,6 +37,8 @@ type Events =
   | { type: "end-round-with-big-gin" }
   | { type: "counted-dead-wood"; player: 1 | 2; value: number };
 
+type Tags = "in-game";
+
 export function getScoreForPlayer(player: 1 | 2, scoring: Context["scoring"]) {
   return scoring
     .filter((s) => s.player === player)
@@ -56,6 +60,7 @@ const gameMachine = setup({
   types: {
     context: {} as Context,
     events: {} as Events,
+    tags: {} as Tags,
   },
   guards: {
     noPlayerWon: ({ context: { scoring } }) =>
@@ -85,6 +90,7 @@ const gameMachine = setup({
       },
     },
     running: {
+      tags: ["in-game"],
       on: {
         "end-round": {
           actions: assign({
@@ -96,6 +102,7 @@ const gameMachine = setup({
       },
     },
     roundEndSelection: {
+      tags: ["in-game"],
       on: {
         "end-round-with-gin": {
           actions: assign({
@@ -129,6 +136,7 @@ const gameMachine = setup({
       },
     },
     countOtherPlayerDeadWood: {
+      tags: ["in-game"],
       on: {
         "counted-dead-wood": {
           actions: assign({
@@ -146,6 +154,7 @@ const gameMachine = setup({
       },
     },
     countFirstPlayerDeadWood: {
+      tags: ["in-game"],
       on: {
         "counted-dead-wood": {
           actions: assign({
@@ -156,6 +165,7 @@ const gameMachine = setup({
       },
     },
     countSecondPlayerDeadWood: {
+      tags: ["in-game"],
       on: {
         "counted-dead-wood": {
           actions: assign({
@@ -196,6 +206,7 @@ const gameMachine = setup({
       },
     },
     continueRound: {
+      tags: ["in-game"],
       always: [
         {
           target: "running",

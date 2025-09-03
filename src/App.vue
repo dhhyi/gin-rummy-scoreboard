@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import CountDeadWood from "./components/CountDeadWood.vue";
 import GameIdle from "./components/GameIdle.vue";
 import GameOver from "./components/GameOver.vue";
 import GameRunning from "./components/GameRunning.vue";
 import RoundEndSelection from "./components/RoundEndSelection.vue";
+import ScoringSVG from "./components/ScoringSVG.vue";
 import SelectNames from "./components/SelectNames.vue";
 import { setupGameMachine, type Context } from "./game-machine";
 
@@ -14,74 +16,88 @@ function endingPlayer(context: Context) {
 function otherPlayer(context: Context) {
   return context.roundEndedBy === 1 ? context.playerTwo! : context.playerOne!;
 }
+const displayScoreBoard = ref(false);
 </script>
 
 <template>
-  <GameIdle
-    v-if="snapshot.matches('idle')"
-    @new-game="send({ type: 'new-game' })"
-  />
-  <SelectNames
-    v-else-if="snapshot.matches('playerSelection')"
-    @start-game="(one, two) => send({ type: 'start-game', one, two })"
-  />
-  <GameRunning
-    v-else-if="snapshot.matches('running')"
-    :context="snapshot.context"
-    @player-one-ends="send({ type: 'end-round', player: 1 })"
-    @player-two-ends="send({ type: 'end-round', player: 2 })"
-  />
-  <RoundEndSelection
-    v-else-if="snapshot.matches('roundEndSelection')"
-    :player="endingPlayer(snapshot.context)"
-    @knock="send({ type: 'end-round-with-knock' })"
-    @gin="send({ type: 'end-round-with-gin' })"
-    @big-gin="send({ type: 'end-round-with-big-gin' })"
-  />
-  <CountDeadWood
-    v-else-if="snapshot.matches('countOtherPlayerDeadWood')"
-    :player="otherPlayer(snapshot.context)"
-    @dead-wood-counted="
-      (value) =>
-        send({
-          type: 'counted-dead-wood',
-          player: snapshot.context.roundEndedBy === 1 ? 2 : 1,
-          value,
-        })
-    "
-  />
-  <CountDeadWood
-    v-else-if="snapshot.matches('countFirstPlayerDeadWood')"
-    :player="endingPlayer(snapshot.context)"
-    @dead-wood-counted="
-      (value) =>
-        send({
-          type: 'counted-dead-wood',
-          player: snapshot.context.roundEndedBy!,
-          value,
-        })
-    "
-  />
-  <CountDeadWood
-    v-else-if="snapshot.matches('countSecondPlayerDeadWood')"
-    :player="otherPlayer(snapshot.context)"
-    :allow-zero="true"
-    @dead-wood-counted="
-      (value) =>
-        send({
-          type: 'counted-dead-wood',
-          player: snapshot.context.roundEndedBy === 1 ? 2 : 1,
-          value,
-        })
-    "
-  />
-  <GameOver
-    v-else-if="snapshot.matches('gameOver')"
-    :context="snapshot.context"
-  />
-  <button v-if="!snapshot.matches('idle')" @click="send({ type: 'reset' })">
-    Reset
+  <button
+    v-if="snapshot.hasTag('in-game')"
+    @click="displayScoreBoard = !displayScoreBoard"
+  >
+    Punkte {{ displayScoreBoard ? "ausblenden" : "anzeigen" }}
   </button>
+  <ScoringSVG
+    v-if="displayScoreBoard"
+    :context="snapshot.context"
+    class="mt-4 mb-auto"
+  />
+  <template v-else>
+    <GameIdle
+      v-if="snapshot.matches('idle')"
+      @new-game="send({ type: 'new-game' })"
+    />
+    <SelectNames
+      v-else-if="snapshot.matches('playerSelection')"
+      @start-game="(one, two) => send({ type: 'start-game', one, two })"
+    />
+    <GameRunning
+      v-else-if="snapshot.matches('running')"
+      :context="snapshot.context"
+      @player-one-ends="send({ type: 'end-round', player: 1 })"
+      @player-two-ends="send({ type: 'end-round', player: 2 })"
+    />
+    <RoundEndSelection
+      v-else-if="snapshot.matches('roundEndSelection')"
+      :player="endingPlayer(snapshot.context)"
+      @knock="send({ type: 'end-round-with-knock' })"
+      @gin="send({ type: 'end-round-with-gin' })"
+      @big-gin="send({ type: 'end-round-with-big-gin' })"
+    />
+    <CountDeadWood
+      v-else-if="snapshot.matches('countOtherPlayerDeadWood')"
+      :player="otherPlayer(snapshot.context)"
+      @dead-wood-counted="
+        (value) =>
+          send({
+            type: 'counted-dead-wood',
+            player: snapshot.context.roundEndedBy === 1 ? 2 : 1,
+            value,
+          })
+      "
+    />
+    <CountDeadWood
+      v-else-if="snapshot.matches('countFirstPlayerDeadWood')"
+      :player="endingPlayer(snapshot.context)"
+      @dead-wood-counted="
+        (value) =>
+          send({
+            type: 'counted-dead-wood',
+            player: snapshot.context.roundEndedBy!,
+            value,
+          })
+      "
+    />
+    <CountDeadWood
+      v-else-if="snapshot.matches('countSecondPlayerDeadWood')"
+      :player="otherPlayer(snapshot.context)"
+      :allow-zero="true"
+      @dead-wood-counted="
+        (value) =>
+          send({
+            type: 'counted-dead-wood',
+            player: snapshot.context.roundEndedBy === 1 ? 2 : 1,
+            value,
+          })
+      "
+    />
+    <GameOver
+      v-else-if="snapshot.matches('gameOver')"
+      :context="snapshot.context"
+    />
+    <button v-if="!snapshot.matches('idle')" @click="send({ type: 'reset' })">
+      Reset
+    </button>
+  </template>
 </template>
 
 <style></style>
