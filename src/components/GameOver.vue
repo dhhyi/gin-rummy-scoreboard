@@ -8,25 +8,31 @@ const props = defineProps({
   },
 });
 
-const pointsPlayerOne = getScoreForPlayer(1, props.context);
-const pointsPlayerTwo = getScoreForPlayer(2, props.context);
+const scoring = props.context.scoring;
+const pointsPlayerOne = getScoreForPlayer(1, scoring);
+const pointsPlayerTwo = getScoreForPlayer(2, scoring);
+const namePlayerOne = props.context.playerOne!;
+const namePlayerTwo = props.context.playerTwo!;
 
-const winner =
+type Player = { name: string; score: number };
+const { winner, loser }: { winner: Player; loser: Player } =
   pointsPlayerOne > pointsPlayerTwo
-    ? props.context.playerOne
-    : props.context.playerTwo;
-const loser =
-  pointsPlayerOne > pointsPlayerTwo
-    ? props.context.playerTwo
-    : props.context.playerOne;
-const winnerPoints = Math.max(pointsPlayerOne, pointsPlayerTwo);
-const loserPoints = Math.min(pointsPlayerOne, pointsPlayerTwo);
+    ? {
+        winner: { name: namePlayerOne, score: pointsPlayerOne },
+        loser: { name: namePlayerTwo, score: pointsPlayerTwo },
+      }
+    : {
+        winner: { name: namePlayerTwo, score: pointsPlayerTwo },
+        loser: { name: namePlayerOne, score: pointsPlayerOne },
+      };
 </script>
 
 <template>
   <h1>Spiel beendet</h1>
   <div class="flex flex-col gap-8">
-    <h2>{{ winner }} hat mit {{ winnerPoints }} Punkten gewonnen!<br /></h2>
-    <p>{{ loser }} hat {{ loserPoints }} Punkte.</p>
+    <h2>
+      {{ winner.name }} hat mit {{ winner.score }} Punkten gewonnen!<br />
+    </h2>
+    <p>{{ loser.name }} hat {{ loser.score }} Punkte.</p>
   </div>
 </template>

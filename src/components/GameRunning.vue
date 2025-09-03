@@ -12,7 +12,7 @@ const emit = defineEmits<{
 }>();
 
 function score(player: 1 | 2) {
-  return getScoreForPlayer(player, props.context);
+  return getScoreForPlayer(player, props.context.scoring);
 }
 
 const dealer =

@@ -5,9 +5,15 @@ import GameOver from "./components/GameOver.vue";
 import GameRunning from "./components/GameRunning.vue";
 import RoundEndSelection from "./components/RoundEndSelection.vue";
 import SelectNames from "./components/SelectNames.vue";
-import { setupGameMachine } from "./game-machine";
+import { setupGameMachine, type Context } from "./game-machine";
 
 const { send, snapshot } = setupGameMachine();
+function endingPlayer(context: Context) {
+  return context.roundEndedBy === 1 ? context.playerOne! : context.playerTwo!;
+}
+function otherPlayer(context: Context) {
+  return context.roundEndedBy === 1 ? context.playerTwo! : context.playerOne!;
+}
 </script>
 
 <template>
@@ -27,22 +33,14 @@ const { send, snapshot } = setupGameMachine();
   />
   <RoundEndSelection
     v-else-if="snapshot.matches('roundEndSelection')"
-    :player="
-      snapshot.context.roundEndedBy === 1
-        ? snapshot.context.playerOne!
-        : snapshot.context.playerTwo!
-    "
+    :player="endingPlayer(snapshot.context)"
     @knock="send({ type: 'end-round-with-knock' })"
     @gin="send({ type: 'end-round-with-gin' })"
     @big-gin="send({ type: 'end-round-with-big-gin' })"
   />
   <CountDeadWood
     v-else-if="snapshot.matches('countOtherPlayerDeadWood')"
-    :player="
-      snapshot.context.roundEndedBy === 1
-        ? snapshot.context.playerTwo!
-        : snapshot.context.playerOne!
-    "
+    :player="otherPlayer(snapshot.context)"
     @dead-wood-counted="
       (value) =>
         send({
@@ -54,11 +52,7 @@ const { send, snapshot } = setupGameMachine();
   />
   <CountDeadWood
     v-else-if="snapshot.matches('countFirstPlayerDeadWood')"
-    :player="
-      snapshot.context.roundEndedBy === 1
-        ? snapshot.context.playerOne!
-        : snapshot.context.playerTwo!
-    "
+    :player="endingPlayer(snapshot.context)"
     @dead-wood-counted="
       (value) =>
         send({
@@ -70,11 +64,7 @@ const { send, snapshot } = setupGameMachine();
   />
   <CountDeadWood
     v-else-if="snapshot.matches('countSecondPlayerDeadWood')"
-    :player="
-      snapshot.context.roundEndedBy === 1
-        ? snapshot.context.playerTwo!
-        : snapshot.context.playerOne!
-    "
+    :player="otherPlayer(snapshot.context)"
     @dead-wood-counted="
       (value) =>
         send({

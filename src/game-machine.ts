@@ -20,6 +20,8 @@ function createContext(): Context {
     playerTwo: null,
     scoring: [],
     rounds: 0,
+    roundEndedBy: undefined,
+    firstPlayerDeadWood: undefined,
   };
 }
 
@@ -33,34 +35,32 @@ type Events =
   | { type: "end-round-with-big-gin" }
   | { type: "counted-dead-wood"; player: 1 | 2; value: number };
 
-export function getScoreForPlayer(player: 1 | 2, context: Context) {
-  return context.scoring
+export function getScoreForPlayer(player: 1 | 2, scoring: Context["scoring"]) {
+  return scoring
     .filter((s) => s.player === player)
     .reduce((acc, s) => {
-      if (s.score === "undercut") {
-        return acc + 15;
-      } else if (s.score === "gin") {
-        return acc + 25;
-      } else if (s.score === "big-gin") {
-        return acc + 31;
-      } else {
-        return acc + s.score;
+      switch (s.score) {
+        case "undercut":
+          return acc + 15;
+        case "gin":
+          return acc + 25;
+        case "big-gin":
+          return acc + 31;
+        default:
+          return acc + s.score;
       }
     }, 0);
 }
 
 const gameMachine = setup({
   types: {
-    context: createContext(),
+    context: {} as Context,
     events: {} as Events,
   },
   guards: {
-    noPlayerWon: ({ context }) => {
-      return (
-        getScoreForPlayer(1, context) < 100 &&
-        getScoreForPlayer(2, context) < 100
-      );
-    },
+    noPlayerWon: ({ context: { scoring } }) =>
+      getScoreForPlayer(1, scoring) < 100 &&
+      getScoreForPlayer(2, scoring) < 100,
   },
 }).createMachine({
   id: "game",
@@ -68,33 +68,23 @@ const gameMachine = setup({
   context: createContext(),
   states: {
     idle: {
-      entry: ({ context, event }) => {
-        console.log("idle", event, context);
-      },
       on: {
         "new-game": "playerSelection",
       },
     },
     playerSelection: {
-      entry: ({ context, event }) => {
-        console.log("playerSelection", event, context);
-      },
       on: {
         "start-game": {
           actions: assign({
             playerOne: ({ event }) => event.one,
             playerTwo: ({ event }) => event.two,
             rounds: () => 0,
-            roundEndedBy: () => undefined,
           }),
           target: "running",
         },
       },
     },
     running: {
-      entry: ({ context, event }) => {
-        console.log("running", event, context);
-      },
       on: {
         "end-round": {
           actions: assign({
@@ -106,9 +96,6 @@ const gameMachine = setup({
       },
     },
     roundEndSelection: {
-      entry: ({ context, event }) => {
-        console.log("roundEndSelection", event, context);
-      },
       on: {
         "end-round-with-gin": {
           actions: assign({
@@ -142,9 +129,6 @@ const gameMachine = setup({
       },
     },
     countOtherPlayerDeadWood: {
-      entry: ({ context, event }) => {
-        console.log("countOtherPlayerDeadWood", event, context);
-      },
       on: {
         "counted-dead-wood": {
           actions: assign({
@@ -156,16 +140,12 @@ const gameMachine = setup({
                 score: event.value,
               },
             ],
-            roundEndedBy: () => undefined,
           }),
-          target: "continueRunning",
+          target: "continueRound",
         },
       },
     },
     countFirstPlayerDeadWood: {
-      entry: ({ context, event }) => {
-        console.log("countFirstPlayerDeadWood", event, context);
-      },
       on: {
         "counted-dead-wood": {
           actions: assign({
@@ -176,9 +156,6 @@ const gameMachine = setup({
       },
     },
     countSecondPlayerDeadWood: {
-      entry: ({ context, event }) => {
-        console.log("countSecondPlayerDeadWood", event, context);
-      },
       on: {
         "counted-dead-wood": {
           actions: assign({
@@ -213,29 +190,25 @@ const gameMachine = setup({
                 ];
               }
             },
-            roundEndedBy: () => undefined,
-            firstPlayerDeadWood: () => undefined,
           }),
-          target: "continueRunning",
+          target: "continueRound",
         },
       },
     },
-    continueRunning: {
-      entry: ({ context, event }) => {
-        console.log("continueRunning", event, context);
-      },
+    continueRound: {
       always: [
         {
           target: "running",
           guard: "noPlayerWon",
+          actions: assign({
+            roundEndedBy: () => undefined,
+            firstPlayerDeadWood: () => undefined,
+          }),
         },
         { target: "gameOver" },
       ],
     },
     gameOver: {
-      entry: ({ context, event }) => {
-        console.log("gameOver", event, context);
-      },
       on: {
         "new-game": "playerSelection",
       },
@@ -244,14 +217,7 @@ const gameMachine = setup({
   on: {
     reset: {
       target: ".idle",
-      actions: assign({
-        playerOne: () => null,
-        playerTwo: () => null,
-        rounds: () => 0,
-        roundEndedBy: () => undefined,
-        firstPlayerDeadWood: () => undefined,
-        scoring: () => [],
-      }),
+      actions: assign(() => createContext()),
     },
   },
 });
