@@ -28,9 +28,9 @@ const round = props.context.rounds + 1;
   <h1 v-if="!ended">Runde {{ round }} läuft</h1>
   <h1 v-else>Runde {{ round }} beendet</h1>
   <h2 v-if="!ended">{{ dealer }} muss geben.</h2>
-  <button v-if="!ended" @click="ended = true">Spiel beenden</button>
+  <button v-if="!ended" @click="ended = true">Runde beenden</button>
   <div v-if="ended" class="flex flex-col gap-8">
-    <h2>Wer hat das Spiel beendet?</h2>
+    <h2>Wer hat die Runde beendet?</h2>
     <button @click="emit('player-one-ends')">
       {{ context.playerOne }} ({{ score(1) }})
     </button>
