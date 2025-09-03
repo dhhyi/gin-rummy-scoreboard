@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-public/img/icons/*
+public/img/*
 public/favicon.png
 node_modules
 dist

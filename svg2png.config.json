@@ -5,6 +5,18 @@
       "nameSuffix": "favicon",
       "height": 64,
       "width": 64
+    },
+    {
+      "directory": "public/img/",
+      "nameSuffix": "gin-rummy-scoreboard-192x192",
+      "height": 192,
+      "width": 192
+    },
+    {
+      "directory": "public/img/",
+      "nameSuffix": "gin-rummy-scoreboard-512x512",
+      "height": 512,
+      "width": 512
     }
   ]
 }

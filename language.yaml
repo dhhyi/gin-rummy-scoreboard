@@ -45,6 +45,7 @@ vscode:
     - redhat.vscode-yaml
     - aaron-bond.better-comments
     - peakchen90.open-html-in-browser
+    - AntiAntiSepticeye.vscode-color-picker
   settings:
     editor.defaultFormatter: esbenp.prettier-vscode
     emmet.includeLanguages:
