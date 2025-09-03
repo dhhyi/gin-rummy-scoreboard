@@ -3,8 +3,9 @@ import { ref } from "vue";
 import CountDeadWood from "./components/CountDeadWood.vue";
 import GameIdle from "./components/GameIdle.vue";
 import GameOver from "./components/GameOver.vue";
-import GameRunning from "./components/GameRunning.vue";
+import RoundEnding from "./components/RoundEnding.vue";
 import RoundEndSelection from "./components/RoundEndSelection.vue";
+import RoundRunning from "./components/RoundRunning.vue";
 import ScoringSVG from "./components/ScoringSVG.vue";
 import SelectNames from "./components/SelectNames.vue";
 import { setupGameMachine, type Context } from "./game-machine";
@@ -40,11 +41,16 @@ const displayScoreBoard = ref(false);
       v-else-if="snapshot.matches('playerSelection')"
       @start-game="(one, two) => send({ type: 'start-game', one, two })"
     />
-    <GameRunning
-      v-else-if="snapshot.matches('running')"
+    <RoundRunning
+      v-else-if="snapshot.matches('roundRunning')"
       :context="snapshot.context"
-      @player-one-ends="send({ type: 'end-round', player: 1 })"
-      @player-two-ends="send({ type: 'end-round', player: 2 })"
+      @round-ends="send({ type: 'round-ending' })"
+    />
+    <RoundEnding
+      v-else-if="snapshot.matches('roundEnding')"
+      :context="snapshot.context"
+      @player-one-ends="send({ type: 'end-round-by', player: 1 })"
+      @player-two-ends="send({ type: 'end-round-by', player: 2 })"
     />
     <RoundEndSelection
       v-else-if="snapshot.matches('roundEndSelection')"

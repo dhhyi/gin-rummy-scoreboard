@@ -31,7 +31,8 @@ type Events =
   | { type: "new-game" }
   | { type: "reset" }
   | { type: "start-game"; one: string; two: string }
-  | { type: "end-round"; player: 1 | 2 }
+  | { type: "round-ending" }
+  | { type: "end-round-by"; player: 1 | 2 }
   | { type: "end-round-with-knock" }
   | { type: "end-round-with-gin" }
   | { type: "end-round-with-big-gin" }
@@ -85,14 +86,20 @@ const gameMachine = setup({
             playerTwo: ({ event }) => event.two,
             rounds: () => 0,
           }),
-          target: "running",
+          target: "roundRunning",
         },
       },
     },
-    running: {
+    roundRunning: {
       tags: ["in-game"],
       on: {
-        "end-round": {
+        "round-ending": "roundEnding",
+      },
+    },
+    roundEnding: {
+      tags: ["in-game"],
+      on: {
+        "end-round-by": {
           actions: assign({
             rounds: ({ context }) => context.rounds + 1,
             roundEndedBy: ({ event }) => event.player,
@@ -209,7 +216,7 @@ const gameMachine = setup({
       tags: ["in-game"],
       always: [
         {
-          target: "running",
+          target: "roundRunning",
           guard: "noPlayerWon",
           actions: assign({
             roundEndedBy: () => undefined,
@@ -220,9 +227,7 @@ const gameMachine = setup({
       ],
     },
     gameOver: {
-      on: {
-        "new-game": "playerSelection",
-      },
+      tags: ["in-game"],
     },
   },
   on: {
