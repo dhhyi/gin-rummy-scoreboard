@@ -14,6 +14,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - run: |
+          cat <<EOF > build.sh
+          #!/bin/sh
+          set -e
+
+          echo "::group::Check Formatting and Linting"
+          pnpm run lint
+          pnpm run format
+          git diff --exit-code
+          echo "::endgroup::"
+
+          echo "::group::Generate Icons"
+          pnpm run generate-icons
+          echo "::endgroup::"
+
+          echo "::group::Build"
+          pnpm run build
+          echo "::endgroup::"
+          EOF
+
       - uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -25,20 +45,7 @@ jobs:
           imageName: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer
           cacheFrom: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer-cache
           push: always
-          runCmd: |
-            echo "::group::Check Formatting and Linting"
-            pnpm run lint
-            pnpm run format
-            git diff --exit-code
-            echo "::endgroup::"
-
-            echo "::group::Generate Icons"
-            pnpm run generate-icons
-            echo "::endgroup::"
-
-            echo "::group::Build"
-            pnpm run build
-            echo "::endgroup::"
+          runCmd: sh build.sh
 
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
