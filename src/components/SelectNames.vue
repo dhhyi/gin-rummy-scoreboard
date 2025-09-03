@@ -5,16 +5,17 @@ const emit = defineEmits<{
   (e: "start-game", n1: string, n2: string): void;
 }>();
 
-const playerOne = ref(localStorage.getItem("playerOne") ?? "");
-const playerTwo = ref(localStorage.getItem("playerTwo") ?? "");
+const playerPrefix = "gin-rummy-scoreboard-";
+const playerOne = ref(localStorage.getItem(playerPrefix + "player-one") ?? "");
+const playerTwo = ref(localStorage.getItem(playerPrefix + "player-two") ?? "");
 
 function startGame() {
   const n1 = playerOne.value.trim();
   const n2 = playerTwo.value.trim();
 
   // save names to localStorage
-  localStorage.setItem("playerOne", n1);
-  localStorage.setItem("playerTwo", n2);
+  localStorage.setItem(playerPrefix + "player-one", n1);
+  localStorage.setItem(playerPrefix + "player-two", n2);
 
   emit("start-game", n1, n2);
 }
