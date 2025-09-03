@@ -65,6 +65,7 @@ function otherPlayer(context: Context) {
   <CountDeadWood
     v-else-if="snapshot.matches('countSecondPlayerDeadWood')"
     :player="otherPlayer(snapshot.context)"
+    :allow-zero="true"
     @dead-wood-counted="
       (value) =>
         send({

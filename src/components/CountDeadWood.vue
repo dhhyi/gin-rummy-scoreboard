@@ -1,10 +1,14 @@
 <script lang="ts" setup>
-import { onMounted, ref, useTemplateRef } from "vue";
+import { computed, onMounted, ref, useTemplateRef } from "vue";
 
-defineProps({
+const props = defineProps({
   player: {
     type: String,
     required: true,
+  },
+  allowZero: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -19,6 +23,10 @@ const deadWoodInput = useTemplateRef("dead-wood");
 onMounted(() => {
   deadWoodInput.value?.focus();
 });
+
+const okDisabled = computed(() => {
+  return deadWood.value < 0 || (!props.allowZero && deadWood.value === 0);
+});
 </script>
 
 <template>
@@ -29,6 +37,6 @@ onMounted(() => {
   >
     <h2>{{ player }}, wie viel Totholz hast du?</h2>
     <input ref="dead-wood" v-model="deadWood" type="number" name="dead-wood" />
-    <button type="submit">OK</button>
+    <button :disabled="okDisabled" type="submit">OK</button>
   </form>
 </template>
