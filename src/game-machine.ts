@@ -1,7 +1,7 @@
 import { useMachine } from "@xstate/vue";
 import { assign, setup } from "xstate";
 
-type Scoring = {
+export type Scoring = {
   round: number;
   player: 1 | 2;
   score: "undercut" | "gin" | "big-gin" | number;
