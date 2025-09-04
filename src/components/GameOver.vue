@@ -1,5 +1,7 @@
 <script lang="ts" setup>
+import confetti from "canvas-confetti";
 import { type Context, getScoreForPlayer } from "../game-machine";
+import ScoringSVG from "./ScoringSVG.vue";
 
 const props = defineProps({
   context: {
@@ -15,24 +17,20 @@ const namePlayerOne = props.context.playerOne!;
 const namePlayerTwo = props.context.playerTwo!;
 
 type Player = { name: string; score: number };
-const { winner, loser }: { winner: Player; loser: Player } =
+const winner: Player =
   pointsPlayerOne > pointsPlayerTwo
-    ? {
-        winner: { name: namePlayerOne, score: pointsPlayerOne },
-        loser: { name: namePlayerTwo, score: pointsPlayerTwo },
-      }
-    : {
-        winner: { name: namePlayerTwo, score: pointsPlayerTwo },
-        loser: { name: namePlayerOne, score: pointsPlayerOne },
-      };
+    ? { name: namePlayerOne, score: pointsPlayerOne }
+    : { name: namePlayerTwo, score: pointsPlayerTwo };
+
+confetti({
+  particleCount: 100,
+  spread: 70,
+  origin: { y: 0.6 },
+});
 </script>
 
 <template>
   <h1>Spiel beendet</h1>
-  <div class="flex flex-col gap-8">
-    <h2>
-      {{ winner.name }} hat mit {{ winner.score }} Punkten gewonnen!<br />
-    </h2>
-    <p>{{ loser.name }} hat {{ loser.score }} Punkte.</p>
-  </div>
+  <h2>{{ winner.name }} hat mit {{ winner.score }} Punkten gewonnen!<br /></h2>
+  <ScoringSVG :context="context" />
 </template>

@@ -226,9 +226,7 @@ const gameMachine = setup({
         { target: "gameOver" },
       ],
     },
-    gameOver: {
-      tags: ["in-game"],
-    },
+    gameOver: {},
   },
   on: {
     reset: {
