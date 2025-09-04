@@ -101,6 +101,7 @@ const displayScoreBoard = ref(false);
       v-else-if="snapshot.matches('finalizeRound')"
       :context="snapshot.context"
       @continue-game="send({ type: 'continue-game' })"
+      @correct-score="send({ type: 'correct-score' })"
     />
     <GameOver
       v-else-if="snapshot.matches('gameOver')"

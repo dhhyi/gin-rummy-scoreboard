@@ -37,7 +37,8 @@ type Events =
   | { type: "end-round-with-gin" }
   | { type: "end-round-with-big-gin" }
   | { type: "counted-dead-wood"; player: 1 | 2; value: number }
-  | { type: "continue-game" };
+  | { type: "continue-game" }
+  | { type: "correct-score" };
 
 type Tags = "in-game";
 
@@ -94,7 +95,12 @@ const gameMachine = setup({
     roundRunning: {
       tags: ["in-game"],
       on: {
-        "round-ending": "roundEnding",
+        "round-ending": {
+          actions: assign({
+            rounds: ({ context }) => context.rounds + 1,
+          }),
+          target: "roundEnding",
+        },
       },
     },
     roundEnding: {
@@ -102,7 +108,6 @@ const gameMachine = setup({
       on: {
         "end-round-by": {
           actions: assign({
-            rounds: ({ context }) => context.rounds + 1,
             roundEndedBy: ({ event }) => event.player,
           }),
           target: "roundEndSelection",
@@ -216,6 +221,13 @@ const gameMachine = setup({
     finalizeRound: {
       on: {
         "continue-game": "continueGame",
+        "correct-score": {
+          actions: assign({
+            scoring: ({ context }) =>
+              context.scoring.filter((s) => s.round !== context.rounds),
+          }),
+          target: "roundEnding",
+        },
       },
     },
     continueGame: {
