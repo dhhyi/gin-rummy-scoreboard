@@ -6,11 +6,16 @@ const props = defineProps({
     type: Object as () => Context,
     required: true,
   },
+  highlight: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 type ScoreViz = {
   value: number;
   underline?: boolean;
+  highlight?: boolean;
 };
 const playerOneScoreBoard = ref([] as ScoreViz[]);
 const playerOneScore = computed(() =>
@@ -33,6 +38,7 @@ function updateScores() {
       value: score,
       underline:
         index === arr.length - 1 || arr[index + 1].round !== value.round,
+      highlight: props.highlight && value.round === props.context.rounds,
     };
   };
 
@@ -81,7 +87,14 @@ updateScores();
       {{ context.playerTwo }}
     </text>
     <template v-for="(value, index) in playerOneScoreBoard" :key="index">
-      <text x="60" :y="35 + index * 15">+ {{ value.value }}</text>
+      <text
+        x="60"
+        :y="35 + index * 15"
+        :stroke="value.highlight ? 'red' : 'currentColor'"
+        :fill="value.highlight ? 'red' : 'currentColor'"
+      >
+        + {{ value.value }}
+      </text>
       <line
         v-if="value.underline"
         x1="30"
@@ -91,7 +104,14 @@ updateScores();
       />
     </template>
     <template v-for="(value, index) in playerTwoScoreBoard" :key="index">
-      <text x="160" :y="35 + index * 15">+ {{ value.value }}</text>
+      <text
+        x="160"
+        :y="35 + index * 15"
+        :stroke="value.highlight ? 'red' : 'currentColor'"
+        :fill="value.highlight ? 'red' : 'currentColor'"
+      >
+        + {{ value.value }}
+      </text>
       <line
         v-if="value.underline"
         x1="130"

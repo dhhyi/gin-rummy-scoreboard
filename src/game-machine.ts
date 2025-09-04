@@ -36,7 +36,8 @@ type Events =
   | { type: "end-round-with-knock" }
   | { type: "end-round-with-gin" }
   | { type: "end-round-with-big-gin" }
-  | { type: "counted-dead-wood"; player: 1 | 2; value: number };
+  | { type: "counted-dead-wood"; player: 1 | 2; value: number }
+  | { type: "continue-game" };
 
 type Tags = "in-game";
 
@@ -156,7 +157,7 @@ const gameMachine = setup({
               },
             ],
           }),
-          target: "continueRound",
+          target: "finalizeRound",
         },
       },
     },
@@ -208,11 +209,16 @@ const gameMachine = setup({
               }
             },
           }),
-          target: "continueRound",
+          target: "finalizeRound",
         },
       },
     },
-    continueRound: {
+    finalizeRound: {
+      on: {
+        "continue-game": "continueGame",
+      },
+    },
+    continueGame: {
       tags: ["in-game"],
       always: [
         {

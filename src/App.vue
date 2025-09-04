@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import CountDeadWood from "./components/CountDeadWood.vue";
+import FinalizeRound from "./components/FinalizeRound.vue";
 import GameIdle from "./components/GameIdle.vue";
 import GameOver from "./components/GameOver.vue";
 import RoundEnding from "./components/RoundEnding.vue";
@@ -95,6 +96,11 @@ const displayScoreBoard = ref(false);
             value,
           })
       "
+    />
+    <FinalizeRound
+      v-else-if="snapshot.matches('finalizeRound')"
+      :context="snapshot.context"
+      @continue-game="send({ type: 'continue-game' })"
     />
     <GameOver
       v-else-if="snapshot.matches('gameOver')"
