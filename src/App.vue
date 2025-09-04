@@ -28,11 +28,17 @@ const displayScoreBoard = ref(false);
   >
     Punkte {{ displayScoreBoard ? "ausblenden" : "anzeigen" }}
   </button>
-  <ScoringSVG
-    v-if="displayScoreBoard"
-    :context="snapshot.context"
-    class="mt-4 mb-auto"
-  />
+  <template v-if="displayScoreBoard">
+    <ScoringSVG :context="snapshot.context" class="mt-4 mb-auto" />
+    <button
+      @click="
+        send({ type: 'reset' });
+        displayScoreBoard = false;
+      "
+    >
+      Reset
+    </button>
+  </template>
   <template v-else>
     <GameIdle
       v-if="snapshot.matches('idle')"
@@ -106,10 +112,8 @@ const displayScoreBoard = ref(false);
     <GameOver
       v-else-if="snapshot.matches('gameOver')"
       :context="snapshot.context"
+      @new-game="send({ type: 'new-game' })"
     />
-    <button v-if="!snapshot.matches('idle')" @click="send({ type: 'reset' })">
-      Reset
-    </button>
   </template>
 </template>
 

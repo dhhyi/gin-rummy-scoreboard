@@ -10,6 +10,10 @@ const props = defineProps({
   },
 });
 
+defineEmits<{
+  (e: "new-game"): void;
+}>();
+
 const scoring = props.context.scoring;
 const pointsPlayerOne = getScoreForPlayer(1, scoring);
 const pointsPlayerTwo = getScoreForPlayer(2, scoring);
@@ -33,4 +37,5 @@ confetti({
   <h1>Spiel beendet</h1>
   <h2>{{ winner.name }} hat mit {{ winner.score }} Punkten gewonnen!<br /></h2>
   <ScoringSVG :context="context" />
+  <button @click="$emit('new-game')">Neues Spiel</button>
 </template>

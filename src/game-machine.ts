@@ -244,7 +244,14 @@ const gameMachine = setup({
         { target: "gameOver" },
       ],
     },
-    gameOver: {},
+    gameOver: {
+      on: {
+        "new-game": {
+          actions: assign(() => createContext()),
+          target: "playerSelection",
+        },
+      },
+    },
   },
   on: {
     reset: {
