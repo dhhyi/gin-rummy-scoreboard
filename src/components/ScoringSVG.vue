@@ -38,7 +38,7 @@ function updateScores() {
       value: score,
       underline:
         index === arr.length - 1 || arr[index + 1].round !== value.round,
-      highlight: props.highlight && value.round === props.context.rounds,
+      highlight: props.highlight && value.round === props.context.round,
     };
   };
 

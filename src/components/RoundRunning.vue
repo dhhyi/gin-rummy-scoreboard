@@ -10,15 +10,13 @@ const emit = defineEmits<{
 }>();
 
 const dealer =
-  props.context.rounds % 2 === 0
+  props.context.round % 2 === 1
     ? props.context.playerOne
     : props.context.playerTwo;
-
-const round = props.context.rounds + 1;
 </script>
 
 <template>
-  <h1>Runde {{ round }} läuft</h1>
+  <h1>Runde {{ context.round }} läuft</h1>
   <h2>{{ dealer }} muss geben.</h2>
   <button @click="emit('round-ends')">Runde beenden</button>
 </template>

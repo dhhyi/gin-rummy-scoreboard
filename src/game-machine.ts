@@ -11,7 +11,7 @@ export interface Context {
   playerOne: string | null;
   playerTwo: string | null;
   scoring: Scoring[];
-  rounds: number;
+  round: number;
   roundEndedBy?: 1 | 2;
   firstPlayerDeadWood?: number;
 }
@@ -21,7 +21,7 @@ function createContext(): Context {
     playerOne: null,
     playerTwo: null,
     scoring: [],
-    rounds: 0,
+    round: 0,
     roundEndedBy: undefined,
     firstPlayerDeadWood: undefined,
   };
@@ -86,7 +86,7 @@ const gameMachine = setup({
           actions: assign({
             playerOne: ({ event }) => event.one,
             playerTwo: ({ event }) => event.two,
-            rounds: () => 0,
+            round: ({ context }) => context.round + 1,
           }),
           target: "roundRunning",
         },
@@ -96,9 +96,6 @@ const gameMachine = setup({
       tags: ["in-game"],
       on: {
         "round-ending": {
-          actions: assign({
-            rounds: ({ context }) => context.rounds + 1,
-          }),
           target: "roundEnding",
         },
       },
@@ -122,7 +119,7 @@ const gameMachine = setup({
             scoring: ({ context }) => [
               ...context.scoring,
               {
-                round: context.rounds,
+                round: context.round,
                 player: context.roundEndedBy!,
                 score: "gin",
               },
@@ -135,7 +132,7 @@ const gameMachine = setup({
             scoring: ({ context }) => [
               ...context.scoring,
               {
-                round: context.rounds,
+                round: context.round,
                 player: context.roundEndedBy!,
                 score: "big-gin",
               },
@@ -156,7 +153,7 @@ const gameMachine = setup({
             scoring: ({ context, event }) => [
               ...context.scoring,
               {
-                round: context.rounds,
+                round: context.round,
                 player: context.roundEndedBy!,
                 score: event.value,
               },
@@ -192,7 +189,7 @@ const gameMachine = setup({
                 return [
                   ...context.scoring,
                   {
-                    round: context.rounds,
+                    round: context.round,
                     player: firstPlayer,
                     score: secondPlayerDeadWood - firstPlayerDeadWood,
                   },
@@ -201,12 +198,12 @@ const gameMachine = setup({
                 return [
                   ...context.scoring,
                   {
-                    round: context.rounds,
+                    round: context.round,
                     player: secondPlayer,
                     score: "undercut",
                   },
                   {
-                    round: context.rounds,
+                    round: context.round,
                     player: secondPlayer,
                     score: firstPlayerDeadWood - secondPlayerDeadWood,
                   },
@@ -224,7 +221,7 @@ const gameMachine = setup({
         "correct-score": {
           actions: assign({
             scoring: ({ context }) =>
-              context.scoring.filter((s) => s.round !== context.rounds),
+              context.scoring.filter((s) => s.round !== context.round),
           }),
           target: "roundEnding",
         },
@@ -239,6 +236,7 @@ const gameMachine = setup({
           actions: assign({
             roundEndedBy: () => undefined,
             firstPlayerDeadWood: () => undefined,
+            round: ({ context }) => context.round + 1,
           }),
         },
         { target: "gameOver" },
