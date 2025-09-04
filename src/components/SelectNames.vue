@@ -27,7 +27,7 @@ const canSubmit = computed(() => {
 
 <template>
   <h1>Start</h1>
-  <form class="flex flex-col gap-8" @submit.prevent="startGame()">
+  <form id="namesForm" @submit.prevent="startGame()">
     <h2>Bitte gebt eure Namen ein:</h2>
     <input
       v-model="playerOne"
@@ -41,6 +41,8 @@ const canSubmit = computed(() => {
       name="Spieler2"
       placeholder="Spieler 2"
     />
-    <button :disabled="!canSubmit" type="submit">Start Game</button>
   </form>
+  <button form="namesForm" :disabled="!canSubmit" type="submit">
+    Spiel starten
+  </button>
 </template>

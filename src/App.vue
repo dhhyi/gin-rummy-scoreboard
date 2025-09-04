@@ -24,6 +24,7 @@ const displayScoreBoard = ref(false);
 <template>
   <button
     v-if="snapshot.hasTag('in-game')"
+    class="nav"
     @click="displayScoreBoard = !displayScoreBoard"
   >
     Punkte {{ displayScoreBoard ? "ausblenden" : "anzeigen" }}

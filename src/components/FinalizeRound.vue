@@ -17,7 +17,9 @@ const emits = defineEmits<{
 
 <template>
   <h1>Zwischenstand</h1>
-  <ScoringSVG :context="context" :highlight="true" />
+  <div>
+    <ScoringSVG :context="context" :highlight="true" />
+    <button @click="emits('correct-score')">Punkte korrigieren</button>
+  </div>
   <button @click="emits('continue-game')">Weiter</button>
-  <button @click="emits('correct-score')">Punkte korrigieren</button>
 </template>

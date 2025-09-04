@@ -9,6 +9,39 @@
   body {
     @apply bg-white text-gray-900 dark:bg-blue-950 dark:text-gray-200;
   }
+
+  #app {
+    display: grid;
+    grid-template-areas:
+      "nav"
+      "."
+      "heading"
+      "content"
+      "."
+      "footer";
+    grid-template-rows: 60px 50px 90px 1fr 50px 60px;
+    grid-template-columns: 1fr;
+  }
+
+  #app > * {
+    grid-area: content;
+    @apply flex flex-col gap-8;
+  }
+
+  #app > button:last-of-type:not(.nav) {
+    grid-area: footer;
+    align-self: center;
+  }
+
+  #app > nav,
+  #app > .nav {
+    grid-area: nav;
+    align-self: center;
+  }
+
+  #app > h1 {
+    grid-area: heading;
+  }
 }
 
 @layer components {

@@ -31,12 +31,9 @@ const okDisabled = computed(() => {
 
 <template>
   <h1>Abrechnung</h1>
-  <form
-    class="flex flex-col gap-8"
-    @submit.prevent="emit('dead-wood-counted', deadWood)"
-  >
+  <form id="deadWoodForm" @submit.prevent="emit('dead-wood-counted', deadWood)">
     <h2>{{ player }}, wie viel Totholz hast du?</h2>
     <input ref="dead-wood" v-model="deadWood" type="number" name="dead-wood" />
-    <button :disabled="okDisabled" type="submit">OK</button>
   </form>
+  <button form="deadWoodForm" :disabled="okDisabled" type="submit">OK</button>
 </template>

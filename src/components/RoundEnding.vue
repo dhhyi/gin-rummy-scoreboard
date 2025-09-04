@@ -15,7 +15,7 @@ const round = props.context.rounds + 1;
 
 <template>
   <h1>Runde {{ round }} beendet</h1>
-  <div class="flex flex-col gap-8">
+  <div>
     <h2>Wer hat die Runde beendet?</h2>
     <button @click="emit('player-one-ends')">
       {{ context.playerOne }}

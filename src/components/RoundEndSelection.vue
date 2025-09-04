@@ -15,7 +15,7 @@ const emit = defineEmits<{
 
 <template>
   <h1>Runde beendet</h1>
-  <div class="flex flex-col gap-8">
+  <div>
     <h2>{{ player }}, wie hast du beendet?</h2>
     <button @click="emit('knock')">Klopfen</button>
     <button @click="emit('gin')">Gin</button>
