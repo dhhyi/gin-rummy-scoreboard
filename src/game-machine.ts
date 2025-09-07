@@ -1,5 +1,6 @@
 import { useMachine } from "@xstate/vue";
 import { assign, setup } from "xstate";
+import { saveGame } from "./game-history";
 
 export type Scoring = {
   round: number;
@@ -28,6 +29,7 @@ function createContext(): Context {
 }
 
 type Events =
+  | { type: "show-history" }
   | { type: "new-game" }
   | { type: "reset" }
   | { type: "start-game"; one: string; two: string }
@@ -38,7 +40,8 @@ type Events =
   | { type: "end-round-with-big-gin" }
   | { type: "counted-dead-wood"; player: 1 | 2; value: number }
   | { type: "continue-game" }
-  | { type: "correct-score" };
+  | { type: "correct-score" }
+  | { type: "back-to-title" };
 
 type Tags = "in-game";
 
@@ -77,7 +80,20 @@ const gameMachine = setup({
   states: {
     idle: {
       on: {
-        "new-game": "playerSelection",
+        "new-game": {
+          target: "playerSelection",
+          actions: assign(createContext),
+        },
+        "show-history": {
+          target: "history",
+        },
+      },
+    },
+    history: {
+      on: {
+        "back-to-title": {
+          target: "idle",
+        },
       },
     },
     playerSelection: {
@@ -243,10 +259,12 @@ const gameMachine = setup({
       ],
     },
     gameOver: {
+      entry: ({ context }) => {
+        saveGame(context);
+      },
       on: {
-        "new-game": {
-          actions: assign(() => createContext()),
-          target: "playerSelection",
+        "back-to-title": {
+          target: "idle",
         },
       },
     },
@@ -254,7 +272,6 @@ const gameMachine = setup({
   on: {
     reset: {
       target: ".idle",
-      actions: assign(() => createContext()),
     },
   },
 });

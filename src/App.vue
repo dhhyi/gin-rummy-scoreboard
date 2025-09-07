@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import CountDeadWood from "./components/CountDeadWood.vue";
 import FinalizeRound from "./components/FinalizeRound.vue";
+import GameHistory from "./components/GameHistory.vue";
 import GameIdle from "./components/GameIdle.vue";
 import GameOver from "./components/GameOver.vue";
 import RoundEnding from "./components/RoundEnding.vue";
@@ -44,6 +45,11 @@ const displayScoreBoard = ref(false);
     <GameIdle
       v-if="snapshot.matches('idle')"
       @new-game="send({ type: 'new-game' })"
+      @show-history="send({ type: 'show-history' })"
+    />
+    <GameHistory
+      v-else-if="snapshot.matches('history')"
+      @back="send({ type: 'back-to-title' })"
     />
     <SelectNames
       v-else-if="snapshot.matches('playerSelection')"
@@ -113,7 +119,7 @@ const displayScoreBoard = ref(false);
     <GameOver
       v-else-if="snapshot.matches('gameOver')"
       :context="snapshot.context"
-      @new-game="send({ type: 'new-game' })"
+      @back-to-title="send({ type: 'back-to-title' })"
     />
   </template>
 </template>
