@@ -23,6 +23,9 @@ importers:
       vue:
         specifier: ^3.5.18
         version: 3.5.20(typescript@5.8.3)
+      workbox-window:
+        specifier: ^7.3.0
+        version: 7.3.0
       xstate:
         specifier: ^5.21.0
         version: 5.21.0
