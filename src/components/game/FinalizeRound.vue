@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { type Context } from "../game-machine";
-import ScoringSVG from "./ScoringSVG.vue";
+import { type Context } from "../../game-machine";
+import ScoringSVG from "../ScoringSVG.vue";
 
 defineProps({
   context: {

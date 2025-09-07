@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Context } from "../game-machine";
+import { type Context } from "../../game-machine";
 
 defineProps({
   context: { type: Object as () => Context, required: true },

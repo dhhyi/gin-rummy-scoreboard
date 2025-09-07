@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import CountDeadWood from "./components/CountDeadWood.vue";
-import FinalizeRound from "./components/FinalizeRound.vue";
-import GameHistory from "./components/GameHistory.vue";
-import GameIdle from "./components/GameIdle.vue";
-import GameOver from "./components/GameOver.vue";
-import RoundEnding from "./components/RoundEnding.vue";
-import RoundEndSelection from "./components/RoundEndSelection.vue";
-import RoundRunning from "./components/RoundRunning.vue";
+import CountDeadWood from "./components/game/CountDeadWood.vue";
+import FinalizeRound from "./components/game/FinalizeRound.vue";
+import GameHistory from "./components/game/GameHistory.vue";
+import GameIdle from "./components/game/GameIdle.vue";
+import GameOver from "./components/game/GameOver.vue";
+import RoundEnding from "./components/game/RoundEnding.vue";
+import RoundEndSelection from "./components/game/RoundEndSelection.vue";
+import RoundRunning from "./components/game/RoundRunning.vue";
+import SelectNames from "./components/game/SelectNames.vue";
 import ScoringSVG from "./components/ScoringSVG.vue";
-import SelectNames from "./components/SelectNames.vue";
 import { setupGameMachine, type Context } from "./game-machine";
 
 const { send, snapshot } = setupGameMachine();
@@ -123,5 +123,3 @@ const displayScoreBoard = ref(false);
     />
   </template>
 </template>
-
-<style></style>

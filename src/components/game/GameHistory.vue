@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { getHistory } from "../game-history";
-import ScoringSVG from "./ScoringSVG.vue";
+import { getHistory } from "../../game-history";
+import ScoringSVG from "../ScoringSVG.vue";
 
 defineEmits<{
   (e: "back"): void;

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import confetti from "canvas-confetti";
-import { type Context, getScoreForPlayer } from "../game-machine";
-import ScoringSVG from "./ScoringSVG.vue";
+import { type Context, getScoreForPlayer } from "../../game-machine";
+import ScoringSVG from "../ScoringSVG.vue";
 
 const props = defineProps({
   context: {
