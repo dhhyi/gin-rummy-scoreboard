@@ -1,13 +1,10 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { getHistory } from "../../game-history";
+import { deleteHistoryEntry, history } from "../../game-history";
 import ScoringSVG from "../ScoringSVG.vue";
 
 defineEmits<{
   (e: "back"): void;
 }>();
-
-const history = ref(getHistory());
 
 function formatDate(date: number) {
   return new Intl.DateTimeFormat("de", {
