@@ -1,4 +1,5 @@
 import { useMachine } from "@xstate/vue";
+import type { InjectionKey } from "vue";
 import { assign, setup } from "xstate";
 import { saveGame } from "./game-history";
 
@@ -278,3 +279,7 @@ export function setupGameMachine() {
 
   return { snapshot, send };
 }
+
+type Send = ReturnType<typeof setupGameMachine>["send"];
+
+export const Send = Symbol() as InjectionKey<Send>;

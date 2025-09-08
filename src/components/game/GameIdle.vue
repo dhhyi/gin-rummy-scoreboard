@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-const emit = defineEmits<{
-  (e: "new-game"): void;
-  (e: "show-history"): void;
-}>();
+import { inject } from "vue";
+import { Send } from "../../game-machine";
+
 const gitHash = GIT_HASH;
+const send = inject(Send)!;
 </script>
 
 <template>
@@ -17,6 +17,8 @@ const gitHash = GIT_HASH;
     />
     <h2 class="text-xs">Version: {{ gitHash }}</h2>
   </div>
-  <button class="nav" @click="emit('show-history')">Spielverlauf</button>
-  <button @click="emit('new-game')">Neues Spiel</button>
+  <button class="nav" @click="send({ type: 'show-history' })">
+    Spielverlauf
+  </button>
+  <button @click="send({ type: 'new-game' })">Neues Spiel</button>
 </template>

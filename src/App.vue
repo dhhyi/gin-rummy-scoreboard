@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { provide, ref } from "vue";
 import CountDeadWood from "./components/game/CountDeadWood.vue";
 import FinalizeRound from "./components/game/FinalizeRound.vue";
 import GameHistory from "./components/game/GameHistory.vue";
@@ -10,7 +10,7 @@ import RoundEndSelection from "./components/game/RoundEndSelection.vue";
 import RoundRunning from "./components/game/RoundRunning.vue";
 import SelectNames from "./components/game/SelectNames.vue";
 import ScoringSVG from "./components/ScoringSVG.vue";
-import { setupGameMachine, type Context } from "./game-machine";
+import { Send, setupGameMachine, type Context } from "./game-machine";
 
 const { send, snapshot } = setupGameMachine();
 function endingPlayer(context: Context) {
@@ -20,6 +20,9 @@ function otherPlayer(context: Context) {
   return context.roundEndedBy === 1 ? context.playerTwo! : context.playerOne!;
 }
 const displayScoreBoard = ref(false);
+
+provide(Send, send);
+provide("snapshot", snapshot);
 </script>
 
 <template>
@@ -42,11 +45,7 @@ const displayScoreBoard = ref(false);
     </button>
   </template>
   <template v-else>
-    <GameIdle
-      v-if="snapshot.matches('idle')"
-      @new-game="send({ type: 'new-game' })"
-      @show-history="send({ type: 'show-history' })"
-    />
+    <GameIdle v-if="snapshot.matches('idle')" />
     <GameHistory
       v-else-if="snapshot.matches('history')"
       @back="send({ type: 'back-to-title' })"
