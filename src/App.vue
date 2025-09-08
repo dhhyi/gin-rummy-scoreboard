@@ -24,7 +24,7 @@ const displayScoreBoard = ref(false);
 
 <template>
   <button
-    v-if="snapshot.hasTag('in-game')"
+    v-if="snapshot.matches('game') && !snapshot.matches({ game: 'gameOver' })"
     class="nav"
     @click="displayScoreBoard = !displayScoreBoard"
   >
@@ -34,7 +34,7 @@ const displayScoreBoard = ref(false);
     <ScoringSVG :context="snapshot.context" class="mt-4 mb-auto" />
     <button
       @click="
-        send({ type: 'reset' });
+        send({ type: 'back-to-title' });
         displayScoreBoard = false;
       "
     >
@@ -56,25 +56,25 @@ const displayScoreBoard = ref(false);
       @start-game="(one, two) => send({ type: 'start-game', one, two })"
     />
     <RoundRunning
-      v-else-if="snapshot.matches('roundRunning')"
+      v-else-if="snapshot.matches({ game: 'roundRunning' })"
       :context="snapshot.context"
       @round-ends="send({ type: 'round-ending' })"
     />
     <RoundEnding
-      v-else-if="snapshot.matches('roundEnding')"
+      v-else-if="snapshot.matches({ game: 'roundEnding' })"
       :context="snapshot.context"
       @player-one-ends="send({ type: 'end-round-by', player: 1 })"
       @player-two-ends="send({ type: 'end-round-by', player: 2 })"
     />
     <RoundEndSelection
-      v-else-if="snapshot.matches('roundEndSelection')"
+      v-else-if="snapshot.matches({ game: 'roundEndSelection' })"
       :player="endingPlayer(snapshot.context)"
       @knock="send({ type: 'end-round-with-knock' })"
       @gin="send({ type: 'end-round-with-gin' })"
       @big-gin="send({ type: 'end-round-with-big-gin' })"
     />
     <CountDeadWood
-      v-else-if="snapshot.matches('countOtherPlayerDeadWood')"
+      v-else-if="snapshot.matches({ game: 'countOtherPlayerDeadWood' })"
       :player="otherPlayer(snapshot.context)"
       @dead-wood-counted="
         (value) =>
@@ -86,7 +86,7 @@ const displayScoreBoard = ref(false);
       "
     />
     <CountDeadWood
-      v-else-if="snapshot.matches('countFirstPlayerDeadWood')"
+      v-else-if="snapshot.matches({ game: 'countFirstPlayerDeadWood' })"
       :player="endingPlayer(snapshot.context)"
       @dead-wood-counted="
         (value) =>
@@ -98,7 +98,7 @@ const displayScoreBoard = ref(false);
       "
     />
     <CountDeadWood
-      v-else-if="snapshot.matches('countSecondPlayerDeadWood')"
+      v-else-if="snapshot.matches({ game: 'countSecondPlayerDeadWood' })"
       :player="otherPlayer(snapshot.context)"
       :allow-zero="true"
       @dead-wood-counted="
@@ -111,13 +111,13 @@ const displayScoreBoard = ref(false);
       "
     />
     <FinalizeRound
-      v-else-if="snapshot.matches('finalizeRound')"
+      v-else-if="snapshot.matches({ game: 'finalizeRound' })"
       :context="snapshot.context"
       @continue-game="send({ type: 'continue-game' })"
       @correct-score="send({ type: 'correct-score' })"
     />
     <GameOver
-      v-else-if="snapshot.matches('gameOver')"
+      v-else-if="snapshot.matches({ game: 'gameOver' })"
       :context="snapshot.context"
       @back-to-title="send({ type: 'back-to-title' })"
     />

@@ -31,7 +31,6 @@ function createContext(): Context {
 type Events =
   | { type: "show-history" }
   | { type: "new-game" }
-  | { type: "reset" }
   | { type: "start-game"; one: string; two: string }
   | { type: "round-ending" }
   | { type: "end-round-by"; player: 1 | 2 }
@@ -42,8 +41,6 @@ type Events =
   | { type: "continue-game" }
   | { type: "correct-score" }
   | { type: "back-to-title" };
-
-type Tags = "in-game";
 
 export function getScoreForPlayer(player: 1 | 2, scoring: Context["scoring"]) {
   return scoring
@@ -66,7 +63,6 @@ const gameMachine = setup({
   types: {
     context: {} as Context,
     events: {} as Events,
-    tags: {} as Tags,
   },
   guards: {
     noPlayerWon: ({ context: { scoring } }) =>
@@ -74,7 +70,7 @@ const gameMachine = setup({
       getScoreForPlayer(2, scoring) < 100,
   },
 }).createMachine({
-  id: "game",
+  id: "app",
   initial: "idle",
   context: createContext(),
   states: {
@@ -89,13 +85,7 @@ const gameMachine = setup({
         },
       },
     },
-    history: {
-      on: {
-        "back-to-title": {
-          target: "idle",
-        },
-      },
-    },
+    history: {},
     playerSelection: {
       on: {
         "start-game": {
@@ -104,173 +94,169 @@ const gameMachine = setup({
             playerTwo: ({ event }) => event.two,
             round: ({ context }) => context.round + 1,
           }),
-          target: "roundRunning",
+          target: "game",
         },
       },
     },
-    roundRunning: {
-      tags: ["in-game"],
-      on: {
-        "round-ending": {
-          target: "roundEnding",
-        },
-      },
-    },
-    roundEnding: {
-      tags: ["in-game"],
-      on: {
-        "end-round-by": {
-          actions: assign({
-            roundEndedBy: ({ event }) => event.player,
-          }),
-          target: "roundEndSelection",
-        },
-      },
-    },
-    roundEndSelection: {
-      tags: ["in-game"],
-      on: {
-        "end-round-with-gin": {
-          actions: assign({
-            scoring: ({ context }) => [
-              ...context.scoring,
-              {
-                round: context.round,
-                player: context.roundEndedBy!,
-                score: "gin",
-              },
-            ],
-          }),
-          target: "countOtherPlayerDeadWood",
-        },
-        "end-round-with-big-gin": {
-          actions: assign({
-            scoring: ({ context }) => [
-              ...context.scoring,
-              {
-                round: context.round,
-                player: context.roundEndedBy!,
-                score: "big-gin",
-              },
-            ],
-          }),
-          target: "countOtherPlayerDeadWood",
-        },
-        "end-round-with-knock": {
-          target: "countFirstPlayerDeadWood",
-        },
-      },
-    },
-    countOtherPlayerDeadWood: {
-      tags: ["in-game"],
-      on: {
-        "counted-dead-wood": {
-          actions: assign({
-            scoring: ({ context, event }) => [
-              ...context.scoring,
-              {
-                round: context.round,
-                player: context.roundEndedBy!,
-                score: event.value,
-              },
-            ],
-          }),
-          target: "finalizeRound",
-        },
-      },
-    },
-    countFirstPlayerDeadWood: {
-      tags: ["in-game"],
-      on: {
-        "counted-dead-wood": {
-          actions: assign({
-            firstPlayerDeadWood: ({ event }) => event.value,
-          }),
-          target: "countSecondPlayerDeadWood",
-        },
-      },
-    },
-    countSecondPlayerDeadWood: {
-      tags: ["in-game"],
-      on: {
-        "counted-dead-wood": {
-          actions: assign({
-            scoring: ({ context, event }) => {
-              const firstPlayer = context.roundEndedBy!;
-              const secondPlayer = firstPlayer === 1 ? 2 : 1;
-              const firstPlayerDeadWood = context.firstPlayerDeadWood!;
-              const secondPlayerDeadWood = event.value;
-
-              if (firstPlayerDeadWood < secondPlayerDeadWood) {
-                return [
-                  ...context.scoring,
-                  {
-                    round: context.round,
-                    player: firstPlayer,
-                    score: secondPlayerDeadWood - firstPlayerDeadWood,
-                  },
-                ];
-              } else {
-                return [
-                  ...context.scoring,
-                  {
-                    round: context.round,
-                    player: secondPlayer,
-                    score: "undercut",
-                  },
-                  {
-                    round: context.round,
-                    player: secondPlayer,
-                    score: firstPlayerDeadWood - secondPlayerDeadWood,
-                  },
-                ];
-              }
+    game: {
+      initial: "roundRunning",
+      states: {
+        roundRunning: {
+          on: {
+            "round-ending": {
+              target: "roundEnding",
             },
-          }),
-          target: "finalizeRound",
+          },
+        },
+        roundEnding: {
+          on: {
+            "end-round-by": {
+              actions: assign({
+                roundEndedBy: ({ event }) => event.player,
+              }),
+              target: "roundEndSelection",
+            },
+          },
+        },
+        roundEndSelection: {
+          on: {
+            "end-round-with-gin": {
+              actions: assign({
+                scoring: ({ context }) => [
+                  ...context.scoring,
+                  {
+                    round: context.round,
+                    player: context.roundEndedBy!,
+                    score: "gin",
+                  },
+                ],
+              }),
+              target: "countOtherPlayerDeadWood",
+            },
+            "end-round-with-big-gin": {
+              actions: assign({
+                scoring: ({ context }) => [
+                  ...context.scoring,
+                  {
+                    round: context.round,
+                    player: context.roundEndedBy!,
+                    score: "big-gin",
+                  },
+                ],
+              }),
+              target: "countOtherPlayerDeadWood",
+            },
+            "end-round-with-knock": {
+              target: "countFirstPlayerDeadWood",
+            },
+          },
+        },
+        countOtherPlayerDeadWood: {
+          on: {
+            "counted-dead-wood": {
+              actions: assign({
+                scoring: ({ context, event }) => [
+                  ...context.scoring,
+                  {
+                    round: context.round,
+                    player: context.roundEndedBy!,
+                    score: event.value,
+                  },
+                ],
+              }),
+              target: "finalizeRound",
+            },
+          },
+        },
+        countFirstPlayerDeadWood: {
+          on: {
+            "counted-dead-wood": {
+              actions: assign({
+                firstPlayerDeadWood: ({ event }) => event.value,
+              }),
+              target: "countSecondPlayerDeadWood",
+            },
+          },
+        },
+        countSecondPlayerDeadWood: {
+          on: {
+            "counted-dead-wood": {
+              actions: assign({
+                scoring: ({ context, event }) => {
+                  const firstPlayer = context.roundEndedBy!;
+                  const secondPlayer = firstPlayer === 1 ? 2 : 1;
+                  const firstPlayerDeadWood = context.firstPlayerDeadWood!;
+                  const secondPlayerDeadWood = event.value;
+
+                  if (firstPlayerDeadWood < secondPlayerDeadWood) {
+                    return [
+                      ...context.scoring,
+                      {
+                        round: context.round,
+                        player: firstPlayer,
+                        score: secondPlayerDeadWood - firstPlayerDeadWood,
+                      },
+                    ];
+                  } else {
+                    return [
+                      ...context.scoring,
+                      {
+                        round: context.round,
+                        player: secondPlayer,
+                        score: "undercut",
+                      },
+                      {
+                        round: context.round,
+                        player: secondPlayer,
+                        score: firstPlayerDeadWood - secondPlayerDeadWood,
+                      },
+                    ];
+                  }
+                },
+              }),
+              target: "finalizeRound",
+            },
+          },
+        },
+        finalizeRound: {
+          on: {
+            "continue-game": "continueGame",
+            "correct-score": {
+              actions: assign({
+                scoring: ({ context }) =>
+                  context.scoring.filter((s) => s.round !== context.round),
+              }),
+              target: "roundEnding",
+            },
+          },
+        },
+        continueGame: {
+          always: [
+            {
+              target: "roundRunning",
+              guard: "noPlayerWon",
+              actions: assign({
+                roundEndedBy: () => undefined,
+                firstPlayerDeadWood: () => undefined,
+                round: ({ context }) => context.round + 1,
+              }),
+            },
+            { target: "gameOver" },
+          ],
+        },
+        gameOver: {
+          type: "final",
         },
       },
-    },
-    finalizeRound: {
-      on: {
-        "continue-game": "continueGame",
-        "correct-score": {
-          actions: assign({
-            scoring: ({ context }) =>
-              context.scoring.filter((s) => s.round !== context.round),
-          }),
-          target: "roundEnding",
-        },
-      },
-    },
-    continueGame: {
-      tags: ["in-game"],
-      always: [
-        {
-          target: "roundRunning",
-          guard: "noPlayerWon",
-          actions: assign({
-            roundEndedBy: () => undefined,
-            firstPlayerDeadWood: () => undefined,
-            round: ({ context }) => context.round + 1,
-          }),
-        },
-        { target: "gameOver" },
-      ],
-    },
-    gameOver: {
-      entry: ({ context }) => {
-        saveGame(context);
-      },
-      on: {
-        "back-to-title": {
-          target: "idle",
+      onDone: {
+        actions: ({ context }) => {
+          saveGame(context);
         },
       },
     },
   },
   on: {
-    reset: {
+    "back-to-title": {
       target: ".idle",
     },
   },
