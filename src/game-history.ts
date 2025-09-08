@@ -25,3 +25,10 @@ export function saveGame(context: Context) {
   history.push({ ...context, date: Date.now() });
   setHistory(history);
 }
+
+export function deleteHistoryEntry(index: number) {
+  const history = getHistory();
+  if (index < 0 || index >= history.length) return;
+  history.splice(index, 1);
+  setHistory(history);
+}
