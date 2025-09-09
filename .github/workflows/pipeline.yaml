@@ -42,7 +42,7 @@ jobs:
 
       - uses: devcontainers/ci@v0.3
         with:
-          imageName: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer
+          imageName: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer-cache
           cacheFrom: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer-cache
           push: always
           runCmd: sh build.sh

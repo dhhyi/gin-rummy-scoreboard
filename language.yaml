@@ -21,6 +21,8 @@ devcontainer:
         content: |
           #!/bin/bash
           java -jar /opt/svg2png.jar "$@"
+  publish:
+    image: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer
   instantiate: (pnpm install --frozen-lockfile || true)
   ports:
     - 5173

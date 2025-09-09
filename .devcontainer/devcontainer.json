@@ -8,7 +8,8 @@
   ],
   "postCreateCommand": "sudo chown -Rf ubuntu node_modules /home/ubuntu/.cache/pnpm && (pnpm install --frozen-lockfile || true)",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "cacheFrom": "type=registry,ref=ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer-cache"
   },
   "forwardPorts": [5173],
   "customizations": {
@@ -41,7 +42,8 @@
         "yzhang.markdown-all-in-one",
         "redhat.vscode-yaml",
         "aaron-bond.better-comments",
-        "peakchen90.open-html-in-browser"
+        "peakchen90.open-html-in-browser",
+        "AntiAntiSepticeye.vscode-color-picker"
       ]
     }
   },
