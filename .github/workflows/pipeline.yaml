@@ -14,6 +14,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: actions/cache@v4
+        with:
+          path: pnpm-store.local
+          key: ${{ runner.os }}-pnpm-store
+
+      - run: |
+          mkdir -p pnpm-store.local
+          docker volume create --driver=local -o type=none -o device=$PWD/pnpm-store.local -o o=bind pnpm-store
+          docker inspect pnpm-store
+
+      - uses: actions/cache@v4
+        with:
+          path: playwright-cache.local
+          key: ${{ runner.os }}-playwright-cache
+
+      - run: |
+          mkdir -p playwright-cache.local
+          docker volume create --driver=local -o type=none -o device=$PWD/playwright-cache.local -o o=bind playwright-cache
+          docker inspect playwright-cache
+
       - run: |
           cat <<EOF > build.sh
           #!/bin/sh
