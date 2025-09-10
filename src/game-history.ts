@@ -1,14 +1,18 @@
-import { ref, watchEffect } from "vue";
+import { ref, watch } from "vue";
 import { type Context } from "./game-machine";
 
 type HistoryContext = Context & { date: number };
 
 const localStorageHistoryKey = "gin-rummy-scoreboard-history";
 
+function sorted(arr: HistoryContext[]): HistoryContext[] {
+  return arr.toSorted((a, b) => b.date - a.date);
+}
+
 function getHistory() {
   const item = localStorage.getItem(localStorageHistoryKey) || "[]";
   try {
-    return JSON.parse(item) as HistoryContext[];
+    return sorted(JSON.parse(item) as HistoryContext[]);
   } catch {
     return [];
   }
@@ -16,14 +20,12 @@ function getHistory() {
 
 export const history = ref(getHistory());
 
-watchEffect(() => {
-  const sorted = history.value.toSorted((a, b) => b.date - a.date);
-  localStorage.setItem(localStorageHistoryKey, JSON.stringify(sorted));
-  history.value = sorted;
+watch(history, (newHistory) => {
+  localStorage.setItem(localStorageHistoryKey, JSON.stringify(newHistory));
 });
 
 export function saveGame(context: Context) {
-  history.value = [...history.value, { ...context, date: Date.now() }];
+  history.value = [{ ...context, date: Date.now() }, ...history.value];
 }
 
 export function deleteHistoryEntry(index: number) {
