@@ -4,9 +4,10 @@
   "runArgs": ["--name", "gin-rummy-scoreboard-${devcontainerId}"],
   "mounts": [
     "type=volume,target=${containerWorkspaceFolder}/node_modules,source=gin-rummy-scoreboard-node-modules",
-    "type=volume,target=/home/ubuntu/.cache/pnpm,source=gin-rummy-scoreboard-pnpm-store"
+    "type=volume,target=/home/ubuntu/.cache/pnpm,source=pnpm-store",
+    "type=volume,target=/home/ubuntu/.cache/ms-playwright,source=playwright-cache"
   ],
-  "postCreateCommand": "sudo chown -Rf ubuntu node_modules /home/ubuntu/.cache/pnpm && (pnpm install --frozen-lockfile || true)",
+  "postCreateCommand": "sudo chown -Rf ubuntu node_modules /home/ubuntu/.cache/pnpm /home/ubuntu/.cache/ms-playwright && if test -f package.json; then pnpm install --frozen-lockfile && pnpm playwright install chromium --with-deps; fi",
   "build": {
     "dockerfile": "Dockerfile",
     "cacheFrom": "type=registry,ref=ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer-cache"
@@ -43,7 +44,8 @@
         "redhat.vscode-yaml",
         "aaron-bond.better-comments",
         "peakchen90.open-html-in-browser",
-        "AntiAntiSepticeye.vscode-color-picker"
+        "AntiAntiSepticeye.vscode-color-picker",
+        "ms-playwright.playwright"
       ]
     }
   },

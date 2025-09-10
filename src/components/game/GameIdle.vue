@@ -15,7 +15,7 @@ const gitHash = GIT_HASH;
       src="../../assets/gin-rummy-scoreboard.svg"
       width="200"
     />
-    <h2 class="text-xs">Version: {{ gitHash }}</h2>
+    <h2 class="e2e-hidden text-xs">Version: {{ gitHash }}</h2>
   </div>
   <button class="nav" @click="emit('show-history')">Spielverlauf</button>
   <button @click="emit('new-game')">Neues Spiel</button>

@@ -23,7 +23,8 @@ devcontainer:
           java -jar /opt/svg2png.jar "$@"
   publish:
     image: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer
-  instantiate: (pnpm install --frozen-lockfile || true)
+  instantiate: |
+    if test -f package.json; then pnpm install --frozen-lockfile && pnpm playwright install chromium --with-deps; fi
   ports:
     - 5173
   selftest: |
@@ -33,7 +34,8 @@ extras:
   - tmux
 namedVolumes:
   node_modules: gin-rummy-scoreboard-node-modules
-  $HOME/.cache/pnpm: gin-rummy-scoreboard-pnpm-store
+  $HOME/.cache/pnpm: pnpm-store
+  $HOME/.cache/ms-playwright: playwright-cache
 vscode:
   extensions:
     - Vue.volar
@@ -48,6 +50,7 @@ vscode:
     - aaron-bond.better-comments
     - peakchen90.open-html-in-browser
     - AntiAntiSepticeye.vscode-color-picker
+    - ms-playwright.playwright
   settings:
     editor.defaultFormatter: esbenp.prettier-vscode
     emmet.includeLanguages:

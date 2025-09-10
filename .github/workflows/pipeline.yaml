@@ -32,6 +32,10 @@ jobs:
           echo "::group::Build"
           pnpm run build
           echo "::endgroup::"
+
+          echo "::group::Run Tests"
+          pnpm exec playwright test
+          echo "::endgroup::"
           EOF
 
       - uses: docker/login-action@v2
@@ -45,7 +49,16 @@ jobs:
           imageName: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer-cache
           cacheFrom: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer-cache
           push: always
+          env: |
+            CI=true
           runCmd: sh build.sh
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
       - uses: JamesIves/github-pages-deploy-action@v4
         with:

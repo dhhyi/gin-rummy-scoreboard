@@ -42,7 +42,9 @@ function clickEntry(index: number) {
       class="flex flex-col gap-2"
       @click="clickEntry(index)"
     >
-      <h2>Spiel am {{ formatDate(entry.date) }}</h2>
+      <h2>
+        Spiel am <span class="e2e-hidden">{{ formatDate(entry.date) }}</span>
+      </h2>
       <ScoringSVG :context="entry" />
     </div>
     <p class="pb-4 text-xs">
