@@ -1,1 +1,0 @@
-if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/gin-rummy-scoreboard/sw.js', { scope: '/gin-rummy-scoreboard/' })})}
