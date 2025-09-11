@@ -24,7 +24,7 @@ const displayScoreBoard = ref(false);
 
 <template>
   <button
-    v-if="snapshot.matches('game') && !snapshot.matches({ game: 'gameOver' })"
+    v-if="snapshot.hasTag('display-scoreboard-link')"
     class="nav"
     @click="displayScoreBoard = !displayScoreBoard"
   >

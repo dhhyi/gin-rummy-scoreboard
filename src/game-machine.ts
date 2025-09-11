@@ -42,6 +42,8 @@ type Events =
   | { type: "correct-score" }
   | { type: "back-to-title" };
 
+type Tags = "display-scoreboard-link";
+
 export function getScoreForPlayer(player: 1 | 2, scoring: Context["scoring"]) {
   return scoring
     .filter((s) => s.player === player)
@@ -63,6 +65,7 @@ const gameMachine = setup({
   types: {
     context: {} as Context,
     events: {} as Events,
+    tags: {} as Tags,
   },
   guards: {
     noPlayerWon: ({ context: { scoring } }) =>
@@ -102,6 +105,7 @@ const gameMachine = setup({
       initial: "roundRunning",
       states: {
         roundRunning: {
+          tags: ["display-scoreboard-link"],
           on: {
             "round-ending": {
               target: "roundEnding",
@@ -109,6 +113,7 @@ const gameMachine = setup({
           },
         },
         roundEnding: {
+          tags: ["display-scoreboard-link"],
           on: {
             "end-round-by": {
               actions: assign({
@@ -119,6 +124,7 @@ const gameMachine = setup({
           },
         },
         roundEndSelection: {
+          tags: ["display-scoreboard-link"],
           on: {
             "end-round-with-gin": {
               actions: assign({
@@ -152,6 +158,7 @@ const gameMachine = setup({
           },
         },
         countOtherPlayerDeadWood: {
+          tags: ["display-scoreboard-link"],
           on: {
             "counted-dead-wood": {
               actions: assign({
@@ -169,6 +176,7 @@ const gameMachine = setup({
           },
         },
         countFirstPlayerDeadWood: {
+          tags: ["display-scoreboard-link"],
           on: {
             "counted-dead-wood": {
               actions: assign({
@@ -179,6 +187,7 @@ const gameMachine = setup({
           },
         },
         countSecondPlayerDeadWood: {
+          tags: ["display-scoreboard-link"],
           on: {
             "counted-dead-wood": {
               actions: assign({
