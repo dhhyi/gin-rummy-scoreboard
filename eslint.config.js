@@ -1,4 +1,5 @@
 import eslint from "@eslint/js";
+import vueI18n from "@intlify/eslint-plugin-vue-i18n";
 import eslintConfigPrettier from "eslint-config-prettier";
 import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 import eslintPluginVue from "eslint-plugin-vue";
@@ -12,6 +13,7 @@ export default typescriptEslint.config(
       eslint.configs.recommended,
       ...typescriptEslint.configs.recommended,
       ...eslintPluginVue.configs["flat/recommended"],
+      ...vueI18n.configs.recommended,
     ],
     files: ["**/*.{ts,vue}"],
     languageOptions: {
@@ -23,7 +25,18 @@ export default typescriptEslint.config(
       },
     },
     rules: {
-      // your rules
+      "@intlify/vue-i18n/no-unused-keys": [
+        "error",
+        {
+          extensions: [".ts", ".vue"],
+        },
+      ],
+    },
+    settings: {
+      "vue-i18n": {
+        localeDir: "./src/locales/*.{json,json5,yaml,yml}",
+        messageSyntaxVersion: "^11.0.0",
+      },
     },
   },
   eslintConfigPrettier,

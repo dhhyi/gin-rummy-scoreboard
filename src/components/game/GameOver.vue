@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import confetti from "canvas-confetti";
+import { useI18n } from "vue-i18n";
 import { type Context, getScoreForPlayer } from "../../game-machine";
 import ScoringSVG from "../ScoringSVG.vue";
+
+const { t: $t } = useI18n();
 
 const props = defineProps({
   context: {
@@ -34,10 +37,26 @@ confetti({
 </script>
 
 <template>
-  <h1>Spiel beendet</h1>
+  <h1>{{ $t("game-over") }}</h1>
   <div>
-    <h2>{{ winner.name }} hat mit {{ winner.score }} Punkten gewonnen!</h2>
+    <h2>{{ $t("winner", { player: winner.name, score: winner.score }) }}</h2>
     <ScoringSVG :context="context" />
   </div>
-  <button @click="$emit('back-to-title')">Startbildschirm</button>
+  <button @click="$emit('back-to-title')">{{ $t("back-to-title") }}</button>
 </template>
+
+<i18n lang="json" locale="de">
+{
+  "game-over": "Spiel beendet",
+  "winner": "{player} hat mit {score} Punkten gewonnen!",
+  "back-to-title": "Startbildschirm"
+}
+</i18n>
+
+<i18n lang="json" locale="en">
+{
+  "game-over": "Game over",
+  "winner": "{player} has won with {score} points!",
+  "back-to-title": "Back to title"
+}
+</i18n>

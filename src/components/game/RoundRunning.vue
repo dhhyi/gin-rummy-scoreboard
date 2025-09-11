@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import { type Context } from "../../game-machine";
+
+const { t: $t } = useI18n();
 
 const props = defineProps({
   context: { type: Object as () => Context, required: true },
@@ -16,7 +19,23 @@ const dealer =
 </script>
 
 <template>
-  <h1>Runde {{ context.round }} läuft</h1>
-  <h2>{{ dealer }} muss geben.</h2>
-  <button @click="emit('round-ends')">Runde beenden</button>
+  <h1>{{ $t("round-running", { round: context.round }) }}</h1>
+  <h2>{{ $t("dealer-message", { dealer }) }}</h2>
+  <button @click="emit('round-ends')">{{ $t("end-round") }}</button>
 </template>
+
+<i18n lang="json" locale="de">
+{
+  "round-running": "Runde {round} läuft",
+  "dealer-message": "{dealer} muss geben.",
+  "end-round": "Runde beenden"
+}
+</i18n>
+
+<i18n lang="json" locale="en">
+{
+  "round-running": "Round {round} is running",
+  "dealer-message": "{dealer} is the dealer.",
+  "end-round": "End Round"
+}
+</i18n>

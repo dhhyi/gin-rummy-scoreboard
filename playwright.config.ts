@@ -30,7 +30,7 @@ export default defineConfig({
   projects: [
     {
       name: "Mobile Chrome",
-      use: { ...devices["Pixel 5"] },
+      use: { ...devices["Pixel 5"], locale: "de-DE" },
     },
   ],
   webServer: {

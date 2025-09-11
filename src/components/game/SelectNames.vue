@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t: $t } = useI18n();
 
 const emit = defineEmits<{
   (e: "start-game", n1: string, n2: string): void;
@@ -26,9 +29,9 @@ const canSubmit = computed(() => {
 </script>
 
 <template>
-  <h1>Start</h1>
+  <h1>{{ $t("start") }}</h1>
   <form id="namesForm" @submit.prevent="startGame()">
-    <h2>Bitte gebt eure Namen ein:</h2>
+    <h2>{{ $t("enter-names") }}</h2>
     <input
       v-model="playerOne"
       type="text"
@@ -43,6 +46,22 @@ const canSubmit = computed(() => {
     />
   </form>
   <button form="namesForm" :disabled="!canSubmit" type="submit">
-    Spiel starten
+    {{ $t("start-game") }}
   </button>
 </template>
+
+<i18n lang="json" locale="de">
+{
+  "start": "Start",
+  "start-game": "Spiel starten",
+  "enter-names": "Bitte gebt eure Namen ein:"
+}
+</i18n>
+
+<i18n lang="json" locale="en">
+{
+  "start": "Start",
+  "start-game": "Start Game",
+  "enter-names": "Please enter your names:"
+}
+</i18n>

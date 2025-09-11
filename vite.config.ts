@@ -1,3 +1,4 @@
+import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
@@ -5,6 +6,7 @@ import { type ManifestOptions, VitePWA } from "vite-plugin-pwa";
 import manifest from "./manifest.json";
 
 import { execSync } from "child_process";
+import path from "path";
 
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
 
@@ -19,6 +21,9 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: manifest as unknown as ManifestOptions,
+    }),
+    VueI18nPlugin({
+      include: path.resolve(__dirname, "./src/locales/**"),
     }),
   ],
   base: "/gin-rummy-scoreboard/",

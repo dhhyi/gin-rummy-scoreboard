@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { type Context, getScoreForPlayer, type Scoring } from "../game-machine";
+
+const { t: $t } = useI18n();
+
 const props = defineProps({
   context: {
     type: Object as () => Context,
@@ -93,7 +97,7 @@ updateScores();
         :stroke="value.highlight ? 'red' : 'currentColor'"
         :fill="value.highlight ? 'red' : 'currentColor'"
       >
-        + {{ value.value }}
+        {{ $t("value", { value: value.value }) }}
       </text>
       <line
         v-if="value.underline"
@@ -110,7 +114,7 @@ updateScores();
         :stroke="value.highlight ? 'red' : 'currentColor'"
         :fill="value.highlight ? 'red' : 'currentColor'"
       >
-        + {{ value.value }}
+        {{ $t("value", { value: value.value }) }}
       </text>
       <line
         v-if="value.underline"
@@ -128,3 +132,15 @@ updateScores();
     </text>
   </svg>
 </template>
+
+<i18n lang="json" locale="de">
+{
+  "value": "+ {value}"
+}
+</i18n>
+
+<i18n lang="json" locale="en">
+{
+  "value": "+ {value}"
+}
+</i18n>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import CountDeadWood from "./components/game/CountDeadWood.vue";
 import FinalizeRound from "./components/game/FinalizeRound.vue";
 import GameHistory from "./components/game/GameHistory.vue";
@@ -11,6 +12,8 @@ import RoundRunning from "./components/game/RoundRunning.vue";
 import SelectNames from "./components/game/SelectNames.vue";
 import ScoringSVG from "./components/ScoringSVG.vue";
 import { setupGameMachine, type Context } from "./game-machine";
+
+const { t: $t } = useI18n();
 
 const { send, snapshot } = setupGameMachine();
 function endingPlayer(context: Context) {
@@ -28,7 +31,7 @@ const displayScoreBoard = ref(false);
     class="nav"
     @click="displayScoreBoard = !displayScoreBoard"
   >
-    Punkte {{ displayScoreBoard ? "ausblenden" : "anzeigen" }}
+    {{ displayScoreBoard ? $t("hide-scoreboard") : $t("display-scoreboard") }}
   </button>
   <template v-if="displayScoreBoard">
     <ScoringSVG :context="snapshot.context" class="mt-4 mb-auto" />
@@ -38,7 +41,7 @@ const displayScoreBoard = ref(false);
         displayScoreBoard = false;
       "
     >
-      Reset
+      {{ $t("reset") }}
     </button>
   </template>
   <template v-else>
@@ -123,3 +126,19 @@ const displayScoreBoard = ref(false);
     />
   </template>
 </template>
+
+<i18n locale="de" lang="json">
+{
+  "display-scoreboard": "Punkte anzeigen",
+  "hide-scoreboard": "Punkte ausblenden",
+  "reset": "Reset"
+}
+</i18n>
+
+<i18n locale="en" lang="json">
+{
+  "display-scoreboard": "Display Scoreboard",
+  "hide-scoreboard": "Hide Scoreboard",
+  "reset": "Reset"
+}
+</i18n>

@@ -62,11 +62,11 @@ test("happy path", async ({ page }) => {
 
   await expect(page.locator("#app")).toMatchAriaSnapshot(`
     - button "Punkte anzeigen"
-    - heading "Abrechnung" [level=1]
+    - heading "Totholz zählen" [level=1]
     - heading "Bob, wie viel Totholz hast du?" [level=2]
     - spinbutton: "0"
     - button "OK" [disabled]
-    `);
+  `);
 
   await page.getByRole("spinbutton").fill("13");
   await page.getByRole("button", { name: "OK" }).click();
