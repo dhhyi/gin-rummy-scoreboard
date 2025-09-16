@@ -23,6 +23,13 @@ function otherPlayer(context: Context) {
   return context.roundEndedBy === 1 ? context.playerTwo! : context.playerOne!;
 }
 const displayScoreBoard = ref(false);
+
+function reset() {
+  if (confirm($t("reset-confirmation"))) {
+    send({ type: "back-to-title" });
+    displayScoreBoard.value = false;
+  }
+}
 </script>
 
 <template>
@@ -35,14 +42,7 @@ const displayScoreBoard = ref(false);
   </button>
   <template v-if="displayScoreBoard">
     <ScoringSVG :context="snapshot.context" class="mt-4 mb-auto" />
-    <button
-      @click="
-        send({ type: 'back-to-title' });
-        displayScoreBoard = false;
-      "
-    >
-      {{ $t("reset") }}
-    </button>
+    <button @click="reset()">{{ $t("reset") }}</button>
   </template>
   <template v-else>
     <GameIdle
@@ -131,7 +131,8 @@ const displayScoreBoard = ref(false);
 {
   "display-scoreboard": "Punkte anzeigen",
   "hide-scoreboard": "Punkte ausblenden",
-  "reset": "Reset"
+  "reset": "Reset",
+  "reset-confirmation": "Möchtest du das Spiel wirklich zurücksetzen? Der aktuelle Spielstand geht verloren."
 }
 </i18n>
 
@@ -139,6 +140,7 @@ const displayScoreBoard = ref(false);
 {
   "display-scoreboard": "Display Scoreboard",
   "hide-scoreboard": "Hide Scoreboard",
-  "reset": "Reset"
+  "reset": "Reset",
+  "reset-confirmation": "Are you sure you want to reset the game? The current score will be lost."
 }
 </i18n>
