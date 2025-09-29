@@ -49,7 +49,7 @@ function clickEntry(index: number) {
         {{ $t("game-on")
         }}<span class="e2e-hidden">{{ formatDate(entry.date) }}</span>
       </h2>
-      <ScoringSVG :context="entry" />
+      <ScoringSVG :context="entry" :highlight-winner="true" />
     </div>
     <p class="pb-4 text-xs">
       {{ $t("click-to-delete") }}

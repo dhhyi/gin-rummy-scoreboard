@@ -10,7 +10,11 @@ const props = defineProps({
     type: Object as () => Context,
     required: true,
   },
-  highlight: {
+  highlightPoints: {
+    type: Boolean,
+    default: false,
+  },
+  highlightWinner: {
     type: Boolean,
     default: false,
   },
@@ -29,6 +33,9 @@ const playerTwoScoreBoard = ref([] as ScoreViz[]);
 const playerTwoScore = computed(() =>
   playerTwoScoreBoard.value.reduce((acc, b) => acc + b.value, 0),
 );
+const winner = computed(() =>
+  playerOneScore.value > playerTwoScore.value ? 1 : 2,
+);
 const length = ref(200);
 
 function updateScores() {
@@ -42,7 +49,7 @@ function updateScores() {
       value: score,
       underline:
         index === arr.length - 1 || arr[index + 1].round !== value.round,
-      highlight: props.highlight && value.round === props.context.round,
+      highlight: props.highlightPoints && value.round === props.context.round,
     };
   };
 
@@ -94,10 +101,20 @@ const vHighlight = (el: SVGTextElement, binding: { value: boolean }) => {
     <line x1="100" y1="1" x2="100" :y2="length - 1" />
     <line x1="1" y1="20" x2="199" y2="20" />
     <line x1="1" :y1="length - 20" x2="199" :y2="length - 20" />
-    <text x="50" y="15" text-anchor="middle">
+    <text
+      v-highlight="props.highlightWinner && winner === 1"
+      x="50"
+      y="15"
+      text-anchor="middle"
+    >
       {{ context.playerOne }}
     </text>
-    <text x="150" y="15" text-anchor="middle">
+    <text
+      v-highlight="props.highlightWinner && winner === 2"
+      x="150"
+      y="15"
+      text-anchor="middle"
+    >
       {{ context.playerTwo }}
     </text>
     <template v-for="(value, index) in playerOneScoreBoard" :key="index">
@@ -124,10 +141,18 @@ const vHighlight = (el: SVGTextElement, binding: { value: boolean }) => {
         :y2="38 + index * 15"
       />
     </template>
-    <text x="60" :y="length - 6">
+    <text
+      v-highlight="props.highlightWinner && winner === 1"
+      x="60"
+      :y="length - 6"
+    >
       {{ playerOneScore }}
     </text>
-    <text x="160" :y="length - 6">
+    <text
+      v-highlight="props.highlightWinner && winner === 2"
+      x="160"
+      :y="length - 6"
+    >
       {{ playerTwoScore }}
     </text>
   </svg>

@@ -40,7 +40,7 @@ confetti({
   <h1>{{ $t("game-over") }}</h1>
   <div>
     <h2>{{ $t("winner", { player: winner.name, score: winner.score }) }}</h2>
-    <ScoringSVG :context="context" />
+    <ScoringSVG :context="context" :highlight-winner="true" />
   </div>
   <button @click="$emit('back-to-title')">{{ $t("back-to-title") }}</button>
 </template>

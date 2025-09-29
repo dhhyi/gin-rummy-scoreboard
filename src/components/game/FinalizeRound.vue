@@ -21,7 +21,7 @@ const emits = defineEmits<{
 <template>
   <h1>{{ $t("intermediate-score") }}</h1>
   <div>
-    <ScoringSVG :context="context" :highlight="true" />
+    <ScoringSVG :context="context" :highlight-points="true" />
     <button @click="emits('correct-score')">{{ $t("correct-score") }}</button>
   </div>
   <button @click="emits('continue-game')">{{ $t("continue") }}</button>
