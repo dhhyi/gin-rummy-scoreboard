@@ -26,6 +26,12 @@ function startGame() {
 const canSubmit = computed(() => {
   return !!playerOne.value?.trim() && !!playerTwo.value?.trim();
 });
+
+function switchNames() {
+  const name = playerOne.value;
+  playerOne.value = playerTwo.value;
+  playerTwo.value = name;
+}
 </script>
 
 <template>
@@ -38,6 +44,7 @@ const canSubmit = computed(() => {
       name="Spieler1"
       placeholder="Spieler 1"
     />
+    <button class="self-center" @click.prevent="switchNames()">˄˅</button>
     <input
       v-model="playerTwo"
       type="text"
