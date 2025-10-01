@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { type Context, getScoreForPlayer, type Scoring } from "../game-machine";
+import {
+  type Context,
+  getScoreForPlayer,
+  getWinner,
+  type Scoring,
+} from "../game-machine";
 
 const { t: $t } = useI18n();
 
@@ -26,16 +31,7 @@ type ScoreViz = {
   highlight?: boolean;
 };
 const playerOneScoreBoard = ref([] as ScoreViz[]);
-const playerOneScore = computed(() =>
-  playerOneScoreBoard.value.reduce((acc, b) => acc + b.value, 0),
-);
 const playerTwoScoreBoard = ref([] as ScoreViz[]);
-const playerTwoScore = computed(() =>
-  playerTwoScoreBoard.value.reduce((acc, b) => acc + b.value, 0),
-);
-const winner = computed(() =>
-  playerOneScore.value > playerTwoScore.value ? 1 : 2,
-);
 const length = ref(200);
 
 function updateScores() {
@@ -64,6 +60,14 @@ function updateScores() {
 }
 
 updateScores();
+
+const playerOneScore = computed(() =>
+  getScoreForPlayer(1, props.context.scoring),
+);
+const playerTwoScore = computed(() =>
+  getScoreForPlayer(2, props.context.scoring),
+);
+const winner = computed(() => getWinner(props.context.scoring));
 
 const vHighlight = (el: SVGTextElement, binding: { value: boolean }) => {
   if (binding.value) {

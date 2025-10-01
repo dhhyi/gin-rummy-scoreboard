@@ -61,6 +61,17 @@ export function getScoreForPlayer(player: 1 | 2, scoring: Context["scoring"]) {
     }, 0);
 }
 
+export function getWinner(scoring: Context["scoring"]) {
+  const playerOneScore = getScoreForPlayer(1, scoring);
+  const playerTwoScore = getScoreForPlayer(2, scoring);
+
+  if (playerOneScore > playerTwoScore) {
+    return 1;
+  } else {
+    return 2;
+  }
+}
+
 const gameMachine = setup({
   types: {
     context: {} as Context,
