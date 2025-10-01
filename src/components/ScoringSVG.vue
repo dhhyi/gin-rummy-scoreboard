@@ -57,6 +57,16 @@ function updateScores() {
 }
 
 updateScores();
+
+const vHighlight = (el: SVGTextElement, binding: { value: boolean }) => {
+  if (binding.value) {
+    el.setAttribute("fill", "red");
+    el.setAttribute("stroke", "red");
+  } else {
+    el.setAttribute("fill", "currentColor");
+    el.setAttribute("stroke", "currentColor");
+  }
+};
 </script>
 
 <template>
@@ -91,12 +101,7 @@ updateScores();
       {{ context.playerTwo }}
     </text>
     <template v-for="(value, index) in playerOneScoreBoard" :key="index">
-      <text
-        x="60"
-        :y="35 + index * 15"
-        :stroke="value.highlight ? 'red' : 'currentColor'"
-        :fill="value.highlight ? 'red' : 'currentColor'"
-      >
+      <text v-highlight="value.highlight" x="60" :y="35 + index * 15">
         {{ $t("value", { value: value.value }) }}
       </text>
       <line
@@ -108,12 +113,7 @@ updateScores();
       />
     </template>
     <template v-for="(value, index) in playerTwoScoreBoard" :key="index">
-      <text
-        x="160"
-        :y="35 + index * 15"
-        :stroke="value.highlight ? 'red' : 'currentColor'"
-        :fill="value.highlight ? 'red' : 'currentColor'"
-      >
+      <text v-highlight="value.highlight" x="160" :y="35 + index * 15">
         {{ $t("value", { value: value.value }) }}
       </text>
       <line
