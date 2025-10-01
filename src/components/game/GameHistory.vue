@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { deleteHistoryEntry, history } from "../../game-history";
+import { deleteHistoryEntry, history, statistics } from "../../game-history";
 import ScoringSVG from "../ScoringSVG.vue";
 
 const { t: $t } = useI18n();
@@ -38,7 +38,7 @@ function clickEntry(index: number) {
 <template>
   <button class="nav" @click="$emit('back')">{{ $t("back") }}</button>
   <h1>{{ $t("game-history") }}</h1>
-  <div v-if="history.length">
+  <div v-if="history.length" class="last:pb-8">
     <div
       v-for="(entry, index) in history"
       :key="index"
@@ -51,9 +51,18 @@ function clickEntry(index: number) {
       </h2>
       <ScoringSVG :context="entry" :highlight-winner="true" />
     </div>
-    <p class="pb-4 text-xs">
+    <p class="text-xs">
       {{ $t("click-to-delete") }}
     </p>
+    <h2 class="mt-4 font-bold">{{ $t("statistics") }}</h2>
+    <div
+      v-for="(stats, title) in statistics"
+      :key="title"
+      class="flex flex-col justify-center gap-1"
+    >
+      <span class="font-bold">{{ title }}</span>
+      <span>{{ $t("vs", stats) }}</span>
+    </div>
   </div>
   <p v-else>{{ $t("no-history") }}</p>
 </template>
@@ -65,7 +74,9 @@ function clickEntry(index: number) {
   "game-on": "Spiel am ",
   "no-history": "Es sind noch keine Spiele gespeichert.",
   "click-to-delete": "Klicke 10 Mal auf einen Eintrag, um ihn zu löschen.",
-  "confirm-delete": "Willst du diesen Eintrag wirklich löschen?"
+  "confirm-delete": "Willst du diesen Eintrag wirklich löschen?",
+  "statistics": "Statistik",
+  "vs": "{one} : {two}"
 }
 </i18n>
 
@@ -76,6 +87,8 @@ function clickEntry(index: number) {
   "game-on": "Game on ",
   "no-history": "No games have been saved yet.",
   "click-to-delete": "Click 10 times on an entry to delete it.",
-  "confirm-delete": "Do you really want to delete this entry?"
+  "confirm-delete": "Do you really want to delete this entry?",
+  "statistics": "Statistics",
+  "vs": "{one} : {two}"
 }
 </i18n>
