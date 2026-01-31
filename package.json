@@ -9,7 +9,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "pnpx eslint . --ext .js,.ts,.vue --fix",
+    "lint": "pnpx eslint . --ext .js,.ts,.vue --fix --max-warnings=0",
     "format": "pnpx prettier --log-level warn --write ."
   },
   "pre-commit": [
