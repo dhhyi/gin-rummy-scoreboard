@@ -44,7 +44,7 @@ function updateScores() {
     return {
       value: score,
       underline:
-        index === arr.length - 1 || arr[index + 1].round !== value.round,
+        index === arr.length - 1 || arr[index + 1]?.round !== value.round,
       highlight: props.highlightPoints && value.round === props.context.round,
     };
   };
