@@ -9,12 +9,11 @@ language:
 devcontainer:
   name: gin-rummy-scoreboard
   build:
-    packages:
-      - openjdk-21-jre-headless
     root:
       - RUN wget -qO- https://github.com/sterlp/svg2png/releases/download/v1.2.1/svg2png-1.2.1.jar -O /opt/svg2png.jar
     user:
       - RUN pnpm i -g @vue/cli
+      - RUN mise use -g java@21
     files:
       - type: script
         path: /usr/local/bin/svg2png
@@ -24,7 +23,7 @@ devcontainer:
   publish:
     image: ghcr.io/dhhyi/gin-rummy-scoreboard-devcontainer
   instantiate: |
-    if test -f package.json; then pnpm install --frozen-lockfile && pnpm playwright install chromium --with-deps; fi
+    fish -c 'if test -f package.json; pnpm install --frozen-lockfile && pnpm playwright install chromium --with-deps; end'
   ports:
     - 5173
   selftest: |
