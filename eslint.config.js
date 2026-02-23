@@ -31,6 +31,7 @@ export default typescriptEslint.config(
           extensions: [".ts", ".vue"],
         },
       ],
+      "no-useless-assignment": "off",
     },
     settings: {
       "vue-i18n": {
