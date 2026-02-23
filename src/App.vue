@@ -104,6 +104,7 @@ function reset() {
       v-else-if="snapshot.matches({ game: 'countSecondPlayerDeadWood' })"
       :player="otherPlayer(snapshot.context)"
       :allow-zero="true"
+      :can-place-cards="true"
       @dead-wood-counted="
         (value) =>
           send({

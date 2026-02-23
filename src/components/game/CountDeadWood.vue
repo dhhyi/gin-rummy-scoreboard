@@ -13,6 +13,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  canPlaceCards: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const deadWood = ref(0);
@@ -36,6 +40,7 @@ const okDisabled = computed(() => {
   <h1>{{ $t("count-dead-wood") }}</h1>
   <form id="deadWoodForm" @submit.prevent="emit('dead-wood-counted', deadWood)">
     <h2>{{ $t("how-much-dead-wood", { player }) }}</h2>
+    <h2 v-if="props.canPlaceCards">{{ $t("can-place-cards") }}</h2>
     <input ref="dead-wood" v-model="deadWood" type="number" name="dead-wood" />
   </form>
   <button form="deadWoodForm" :disabled="okDisabled" type="submit">
@@ -47,6 +52,7 @@ const okDisabled = computed(() => {
 {
   "count-dead-wood": "Totholz zählen",
   "how-much-dead-wood": "{player}, wie viel Totholz hast du?",
+  "can-place-cards": "Du kannst Karten anlegen.",
   "ok": "OK"
 }
 </i18n>
@@ -55,6 +61,7 @@ const okDisabled = computed(() => {
 {
   "count-dead-wood": "Count dead wood",
   "how-much-dead-wood": "{player}, how much dead wood do you have?",
+  "can-place-cards": "You can place matching cards.",
   "ok": "OK"
 }
 </i18n>
