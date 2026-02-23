@@ -16,11 +16,19 @@ const dealer =
   props.context.round % 2 === 1
     ? props.context.playerOne
     : props.context.playerTwo;
+
+const player =
+  props.context.round % 2 === 1
+    ? props.context.playerTwo
+    : props.context.playerOne;
 </script>
 
 <template>
   <h1>{{ $t("round-running", { round: context.round }) }}</h1>
-  <h2>{{ $t("dealer-message", { dealer }) }}</h2>
+  <div>
+    <h2>{{ $t("dealer-message", { dealer }) }}</h2>
+    <h2>{{ $t("player-message", { player }) }}</h2>
+  </div>
   <button @click="emit('round-ends')">{{ $t("end-round") }}</button>
 </template>
 
@@ -28,6 +36,7 @@ const dealer =
 {
   "round-running": "Runde {round} läuft",
   "dealer-message": "{dealer} muss geben.",
+  "player-message": "{player} spielt aus.",
   "end-round": "Runde beenden"
 }
 </i18n>
@@ -36,6 +45,7 @@ const dealer =
 {
   "round-running": "Round {round} is running",
   "dealer-message": "{dealer} is the dealer.",
+  "player-message": "{player} is playing the first card.",
   "end-round": "End Round"
 }
 </i18n>
