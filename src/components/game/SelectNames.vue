@@ -44,8 +44,7 @@ function switchNames() {
     <input
       v-model="playerOne"
       type="text"
-      name="Spieler1"
-      placeholder="Spieler 1"
+      :placeholder="$t('player-1-placeholder')"
     />
     <button class="self-center" @click.prevent="switchNames()">
       {{ $t("switch-players") }}
@@ -53,8 +52,7 @@ function switchNames() {
     <input
       v-model="playerTwo"
       type="text"
-      name="Spieler2"
-      placeholder="Spieler 2"
+      :placeholder="$t('player-2-placeholder')"
     />
   </form>
   <button form="namesForm" :disabled="!canSubmit" type="submit">
@@ -67,7 +65,9 @@ function switchNames() {
   "start": "Start",
   "start-game": "Spiel starten",
   "enter-names": "Bitte gebt eure Namen ein:",
-  "switch-players": "˄˅"
+  "switch-players": "˄˅",
+  "player-1-placeholder": "Spieler 1",
+  "player-2-placeholder": "Spieler 2"
 }
 </i18n>
 
@@ -76,6 +76,8 @@ function switchNames() {
   "start": "Start",
   "start-game": "Start Game",
   "enter-names": "Please enter your names:",
-  "switch-players": "˄˅"
+  "switch-players": "˄˅",
+  "player-1-placeholder": "Player 1",
+  "player-2-placeholder": "Player 2"
 }
 </i18n>
