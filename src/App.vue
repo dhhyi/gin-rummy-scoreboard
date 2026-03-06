@@ -57,7 +57,7 @@ function reset() {
       :context="snapshot.context"
       class="mt-4 mb-auto"
     />
-    <button @click="reset()">{{ $t("reset") }}</button>
+    <button class="bg-red-600" @click="reset()">{{ $t("reset") }}</button>
   </template>
   <template v-else>
     <GameIdle
