@@ -11,6 +11,10 @@ import {
 const { t: $t } = useI18n();
 
 const props = defineProps({
+  id: {
+    type: String,
+    default: undefined,
+  },
   context: {
     type: Object as () => Context,
     required: true,
@@ -82,6 +86,7 @@ const vHighlight = (el: SVGTextElement, binding: { value: boolean }) => {
 
 <template>
   <svg
+    :id="props.id"
     xmlns="http://www.w3.org/2000/svg"
     :viewBox="`0 0 200 ` + length"
     fill="currentColor"

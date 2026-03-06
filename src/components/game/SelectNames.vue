@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { inViewTransition } from "../../view-transition";
 
 const { t: $t } = useI18n();
 
@@ -28,9 +29,11 @@ const canSubmit = computed(() => {
 });
 
 function switchNames() {
-  const name = playerOne.value;
-  playerOne.value = playerTwo.value;
-  playerTwo.value = name;
+  inViewTransition(() => {
+    const name = playerOne.value;
+    playerOne.value = playerTwo.value;
+    playerTwo.value = name;
+  });
 }
 </script>
 

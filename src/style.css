@@ -10,6 +10,11 @@
     @apply bg-white text-gray-900 dark:bg-blue-950 dark:text-gray-200;
   }
 
+  ::view-transition-group(root) {
+    animation-duration: 500ms;
+    animation-timing-function: ease-out;
+  }
+
   #app {
     display: grid;
     grid-template-areas:
@@ -41,6 +46,25 @@
 
   #app > h1 {
     grid-area: heading;
+  }
+
+  #current-score {
+    view-transition-name: score;
+  }
+
+  ::view-transition-new(score) {
+    animation: fly-in-from-top 500ms ease-out;
+  }
+
+  @keyframes fly-in-from-top {
+    from {
+      transform: translateY(-100vh);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 }
 

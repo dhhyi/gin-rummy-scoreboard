@@ -12,10 +12,16 @@ import RoundRunning from "./components/game/RoundRunning.vue";
 import SelectNames from "./components/game/SelectNames.vue";
 import ScoringSVG from "./components/ScoringSVG.vue";
 import { setupGameMachine, type Context } from "./game-machine";
+import { inViewTransition } from "./view-transition";
 
 const { t: $t } = useI18n();
 
-const { send, snapshot } = setupGameMachine();
+const { send: sendToMachine, snapshot } = setupGameMachine();
+function send(event: Parameters<typeof sendToMachine>[0]) {
+  inViewTransition(() => {
+    sendToMachine(event);
+  });
+}
 function endingPlayer(context: Context) {
   return context.roundEndedBy === 1 ? context.playerOne! : context.playerTwo!;
 }
@@ -23,6 +29,11 @@ function otherPlayer(context: Context) {
   return context.roundEndedBy === 1 ? context.playerTwo! : context.playerOne!;
 }
 const displayScoreBoard = ref(false);
+function toggleScoreboard() {
+  inViewTransition(() => {
+    displayScoreBoard.value = !displayScoreBoard.value;
+  });
+}
 
 function reset() {
   if (confirm($t("reset-confirmation"))) {
@@ -36,12 +47,16 @@ function reset() {
   <button
     v-if="snapshot.hasTag('display-scoreboard-link')"
     class="nav"
-    @click="displayScoreBoard = !displayScoreBoard"
+    @click="toggleScoreboard()"
   >
     {{ displayScoreBoard ? $t("hide-scoreboard") : $t("display-scoreboard") }}
   </button>
   <template v-if="displayScoreBoard">
-    <ScoringSVG :context="snapshot.context" class="mt-4 mb-auto" />
+    <ScoringSVG
+      id="current-score"
+      :context="snapshot.context"
+      class="mt-4 mb-auto"
+    />
     <button @click="reset()">{{ $t("reset") }}</button>
   </template>
   <template v-else>
