@@ -47,7 +47,16 @@ function switchNames() {
       :placeholder="$t('player-1-placeholder')"
     />
     <button class="self-center" @click.prevent="switchNames()">
-      {{ $t("switch-players") }}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 -960 960 960"
+        fill="currentColor"
+        class="h-6 w-6 rotate-90 transform"
+      >
+        <path
+          d="M280-280 80-480l200-200 56 56-103 104h494L624-624l56-56 200 200-200 200-56-56 103-104H233l103 104-56 56Z"
+        />
+      </svg>
     </button>
     <input
       v-model="playerTwo"
@@ -65,7 +74,6 @@ function switchNames() {
   "start": "Start",
   "start-game": "Spiel starten",
   "enter-names": "Bitte gebt eure Namen ein:",
-  "switch-players": "˄˅",
   "player-1-placeholder": "Spieler 1",
   "player-2-placeholder": "Spieler 2"
 }
@@ -76,7 +84,6 @@ function switchNames() {
   "start": "Start",
   "start-game": "Start Game",
   "enter-names": "Please enter your names:",
-  "switch-players": "˄˅",
   "player-1-placeholder": "Player 1",
   "player-2-placeholder": "Player 2"
 }
