@@ -50,9 +50,6 @@
     }
   },
   "containerEnv": {
-    "DCC_BINARY": "",
-    "DCC_REPL": "",
-    "DCC_SELFTEST": "c3ZnMnBuZwo=",
-    "DCC_VERSION": "java -version; node --version; pnpm --version"
+    "DCC_SELFTEST": "c3ZnMnBuZwo="
   }
 }

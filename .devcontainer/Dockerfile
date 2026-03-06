@@ -12,7 +12,6 @@ RUN wget -qO- https://github.com/sterlp/svg2png/releases/download/v1.2.1/svg2png
 
 USER ubuntu
 
-RUN pnpm i -g @vue/cli
 RUN mise use -g java@21
 
 EXPOSE 5173

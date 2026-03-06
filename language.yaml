@@ -1,19 +1,10 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/dhhyi/devcontainer-creator/dist/language_schema.json
 extends: dcc://javascript-pnpm
-language:
-  name: vue.js
-  version: |
-    java -version
-    node --version
-    pnpm --version
 devcontainer:
   name: gin-rummy-scoreboard
   build:
     root:
       - RUN wget -qO- https://github.com/sterlp/svg2png/releases/download/v1.2.1/svg2png-1.2.1.jar -O /opt/svg2png.jar
-    user:
-      - RUN pnpm i -g @vue/cli
-      - RUN mise use -g java@21
     files:
       - type: script
         path: /usr/local/bin/svg2png
