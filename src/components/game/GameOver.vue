@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import confetti from "canvas-confetti";
+import { onBeforeUnmount, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { type Context, getScoreForPlayer } from "../../game-machine";
 import ScoringSVG from "../ScoringSVG.vue";
@@ -29,10 +30,26 @@ const winner: Player =
     ? { name: namePlayerOne, score: pointsPlayerOne }
     : { name: namePlayerTwo, score: pointsPlayerTwo };
 
-confetti({
-  particleCount: 100,
-  spread: 70,
-  origin: { y: 0.6 },
+const confettiSettings = () => ({
+  particleCount: Math.random() * 100 + 50,
+  spread: Math.random() * 50 + 50,
+  origin: { y: 0.6, x: Math.random() * 0.4 + 0.3 },
+});
+let timeoutRef: number;
+function scheduleConfetti(delay = 3000) {
+  timeoutRef = setTimeout(
+    () => {
+      confetti(confettiSettings());
+      scheduleConfetti();
+    },
+    Math.random() * delay + 500,
+  );
+}
+onMounted(() => {
+  scheduleConfetti(0);
+});
+onBeforeUnmount(() => {
+  clearTimeout(timeoutRef);
 });
 </script>
 
