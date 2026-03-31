@@ -3,18 +3,11 @@ import { useI18n } from "vue-i18n";
 import { deleteHistoryEntry, history, statistics } from "../../game-history";
 import ScoringSVG from "../ScoringSVG.vue";
 
-const { t: $t } = useI18n();
+const { t: $t, d: $d } = useI18n();
 
 defineEmits<{
   (e: "back"): void;
 }>();
-
-function formatDate(date: number) {
-  return new Intl.DateTimeFormat(navigator.language, {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(new Date(date));
-}
 
 let lastClickedIndex: number | null = null;
 let clickCount = 0;
@@ -47,7 +40,7 @@ function clickEntry(index: number) {
     >
       <h2>
         {{ $t("game-on")
-        }}<span class="e2e-hidden">{{ formatDate(entry.date) }}</span>
+        }}<span class="e2e-hidden">{{ $d(entry.date, "short") }}</span>
       </h2>
       <ScoringSVG :context="entry" :highlight-winner="true" />
     </div>
