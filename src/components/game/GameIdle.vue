@@ -15,7 +15,7 @@ const buildDate = new Date(BUILD_DATE);
   <h1>{{ $t("title") }}</h1>
   <div class="items-center">
     <img
-      class="flex-grow"
+      class="grow"
       alt="App logo"
       src="../../assets/gin-rummy-scoreboard.svg"
       width="200"
