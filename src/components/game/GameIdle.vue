@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 
-const { t: $t } = useI18n();
+const { t: $t, d: $d } = useI18n();
 
 const emit = defineEmits<{
   (e: "new-game"): void;
   (e: "show-history"): void;
 }>();
 const gitHash = GIT_HASH;
+const buildDate = new Date(BUILD_DATE);
 </script>
 
 <template>
@@ -20,6 +21,9 @@ const gitHash = GIT_HASH;
       width="200"
     />
     <h2 class="e2e-hidden text-xs">{{ $t("version", { gitHash }) }}</h2>
+    <h2 class="e2e-hidden text-xs">
+      {{ $t("built-on") }} {{ $d(buildDate, "short") }}
+    </h2>
   </div>
   <button class="nav" @click="emit('show-history')">
     {{ $t("game-history") }}
@@ -31,6 +35,7 @@ const gitHash = GIT_HASH;
 {
   "new-game": "Neues Spiel",
   "version": "Version: {gitHash}",
+  "built-on": "Erstellt:",
   "game-history": "Spielverlauf"
 }
 </i18n>
@@ -39,6 +44,7 @@ const gitHash = GIT_HASH;
 {
   "new-game": "New Game",
   "version": "Version: {gitHash}",
+  "built-on": "Built:",
   "game-history": "Game History"
 }
 </i18n>

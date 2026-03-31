@@ -12,6 +12,14 @@ const i18n = createI18n({
   messages: {
     en,
   },
+  datetimeFormats: {
+    en: {
+      short: { dateStyle: "short", timeStyle: "short" },
+    },
+    de: {
+      short: { dateStyle: "short", timeStyle: "short" },
+    },
+  },
 });
 
 createApp(App).use(i18n).mount("#app");

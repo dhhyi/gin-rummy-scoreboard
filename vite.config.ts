@@ -9,11 +9,13 @@ import { execSync } from "child_process";
 import path from "path";
 
 const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
+const buildDate = Date.now();
 
 // https://vite.dev/config/
 export default defineConfig({
   define: {
     GIT_HASH: JSON.stringify(commitHash),
+    BUILD_DATE: buildDate,
   },
   plugins: [
     vue(),
