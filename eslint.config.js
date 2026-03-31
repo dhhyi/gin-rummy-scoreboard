@@ -5,8 +5,9 @@ import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
 import eslintPluginVue from "eslint-plugin-vue";
 import globals from "globals";
 import typescriptEslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 
-export default typescriptEslint.config(
+export default defineConfig(
   { ignores: ["*.d.ts", "**/coverage", "**/dist"] },
   {
     extends: [
@@ -19,7 +20,11 @@ export default typescriptEslint.config(
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        GIT_HASH: true,
+        BUILD_DATE: true,
+      },
       parserOptions: {
         parser: typescriptEslint.parser,
       },
