@@ -1,3 +1,11 @@
 .e2e-hidden {
-  display: none;
+  position: relative;
+}
+
+.e2e-hidden::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: pink;
+  z-index: 9999;
 }
