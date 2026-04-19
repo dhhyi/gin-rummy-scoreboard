@@ -46,7 +46,7 @@ jobs:
           echo "::endgroup::"
 
           echo "::group::Generate Icons"
-          pnpm run generate-icons
+          PATH="$PATH:/home/ubuntu/.local/share/mise/shims" pnpm run generate-icons
           echo "::endgroup::"
 
           echo "::group::Build"
