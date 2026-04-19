@@ -3,7 +3,7 @@ import { getPlayerScores, type Context } from "./game-machine";
 
 type HistoryContext = Pick<Context, "players" | "scoring"> & { date: number };
 
-const localStorageHistoryKey = "gin-rummy-scoreboard-history";
+const localStorageHistoryKey = "gin-rummy-scoreboard-history-v2";
 
 function sorted(arr: HistoryContext[]): HistoryContext[] {
   return arr.toSorted((a, b) => b.date - a.date);
@@ -38,18 +38,22 @@ export function deleteHistoryEntry(index: number) {
 
 export const statistics = computed(() => {
   return history.value.reduce<Record<string, number[]>>((acc, game) => {
-    const { players } = game;
-    const sortedPlayers = players.toSorted();
-    const title = sortedPlayers.join(" - ");
-    if (!acc[title]) {
-      acc[title] = players.length === 2 ? [0, 0] : [0, 0, 0];
+    try {
+      const { players } = game;
+      const sortedPlayers = players.toSorted();
+      const title = sortedPlayers.join(" - ");
+      if (!acc[title]) {
+        acc[title] = players.length === 2 ? [0, 0] : [0, 0, 0];
+      }
+      const playerScoring = getPlayerScores(game, "sorted-list");
+      const indexOfWinner = sortedPlayers.findIndex(
+        (p) => p === playerScoring[0].player,
+      );
+      if (indexOfWinner === -1) return acc;
+      acc[title][indexOfWinner] += 1;
+      return acc;
+    } catch {
+      return acc;
     }
-    const playerScoring = getPlayerScores(game, "sorted-list");
-    const indexOfWinner = sortedPlayers.findIndex(
-      (p) => p === playerScoring[0].player,
-    );
-    if (indexOfWinner === -1) return acc;
-    acc[title][indexOfWinner] += 1;
-    return acc;
   }, {});
 });

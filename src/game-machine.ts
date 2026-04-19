@@ -336,7 +336,7 @@ const gameMachine = setup({
 });
 
 export function setupGameMachine() {
-  const localStorageKey = "gin-rummy-scoreboard-state";
+  const localStorageKey = "gin-rummy-scoreboard-state-v2";
   const stateString = localStorage.getItem(localStorageKey);
   const saved = stateString ? JSON.parse(stateString) : undefined;
 
