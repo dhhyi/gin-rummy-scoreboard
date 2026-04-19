@@ -37,27 +37,19 @@ export function deleteHistoryEntry(index: number) {
 }
 
 export const statistics = computed(() => {
-  return history.value.reduce<Record<string, { one: number; two: number }>>(
-    (acc, game) => {
-      const { players } = game;
-      const title = players.join(" - ");
-      if (!acc[title]) {
-        acc[title] = { one: 0, two: 0 };
-      }
-      const playerScoring = getPlayerScores(game);
-      const playerOneScore = playerScoring.find(
-        (s) => s.player === players[0],
-      )!.score;
-      const playerTwoScore = playerScoring.find(
-        (s) => s.player === players[1],
-      )!.score;
-      if (playerOneScore > playerTwoScore) {
-        acc[title].one += 1;
-      } else {
-        acc[title].two += 1;
-      }
-      return acc;
-    },
-    {},
-  );
+  return history.value.reduce<Record<string, number[]>>((acc, game) => {
+    const { players } = game;
+    const sortedPlayers = players.toSorted();
+    const title = sortedPlayers.join(" - ");
+    if (!acc[title]) {
+      acc[title] = players.length === 2 ? [0, 0] : [0, 0, 0];
+    }
+    const playerScoring = getPlayerScores(game, "sorted-list");
+    const indexOfWinner = sortedPlayers.findIndex(
+      (p) => p === playerScoring[0].player,
+    );
+    if (indexOfWinner === -1) return acc;
+    acc[title][indexOfWinner] += 1;
+    return acc;
+  }, {});
 });

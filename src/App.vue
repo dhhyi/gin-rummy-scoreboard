@@ -75,11 +75,11 @@ function reset() {
     />
     <SelectNames
       v-else-if="snapshot.matches('playerSelection')"
-      @start-game="(one, two) => send({ type: 'start-game', one, two })"
+      @start-game="(players) => send({ type: 'start-game', players })"
     />
     <RoundRunning
       v-else-if="snapshot.matches({ game: 'roundRunning' })"
-      :context="snapshot.context.game!"
+      :context="snapshot.context"
       @round-ends="send({ type: 'round-ending' })"
     />
     <RoundEnding

@@ -54,7 +54,12 @@ function clickEntry(index: number) {
       class="flex flex-col justify-center gap-1"
     >
       <span class="font-bold">{{ title }}</span>
-      <span>{{ $t("vs", stats) }}</span>
+      <span v-if="stats.length === 2">{{
+        $t("vs2", { one: stats[0], two: stats[1] })
+      }}</span>
+      <span v-else>{{
+        $t("vs3", { one: stats[0], two: stats[1], three: stats[2] })
+      }}</span>
     </div>
   </div>
   <p v-else>{{ $t("no-history") }}</p>
@@ -69,7 +74,8 @@ function clickEntry(index: number) {
   "click-to-delete": "Klicke 10 Mal auf einen Eintrag, um ihn zu löschen.",
   "confirm-delete": "Willst du diesen Eintrag wirklich löschen?",
   "statistics": "Statistik",
-  "vs": "{one} : {two}"
+  "vs2": "{one} : {two}",
+  "vs3": "{one} : {two} : {three}"
 }
 </i18n>
 
@@ -82,6 +88,7 @@ function clickEntry(index: number) {
   "click-to-delete": "Click 10 times on an entry to delete it.",
   "confirm-delete": "Do you really want to delete this entry?",
   "statistics": "Statistics",
-  "vs": "{one} : {two}"
+  "vs2": "{one} : {two}",
+  "vs3": "{one} : {two} : {three}"
 }
 </i18n>

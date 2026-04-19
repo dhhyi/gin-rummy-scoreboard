@@ -5,22 +5,28 @@ import { type Context } from "../../game-machine";
 const { t: $t } = useI18n();
 
 const props = defineProps({
-  context: { type: Object as () => Required<Context>["game"], required: true },
+  context: { type: Object as () => Context, required: true },
 });
 
 const emit = defineEmits<{
   (e: "round-ends"): void;
 }>();
 
-const dealer =
-  props.context.round % 2 === 1
-    ? props.context.playerOne
-    : props.context.playerTwo;
+const numberOfPlayers = props.context.players.length;
 
-const player =
-  props.context.round % 2 === 1
-    ? props.context.playerTwo
-    : props.context.playerOne;
+const game = props.context.game!;
+
+let dealer: string;
+let player: string;
+if (numberOfPlayers === 2) {
+  dealer = game.round % 2 === 1 ? game.playerOne : game.playerTwo;
+  player = game.round % 2 === 1 ? game.playerTwo : game.playerOne;
+} else {
+  dealer = props.context.players.find(
+    (p) => p !== game.playerOne && p !== game.playerTwo,
+  )!;
+  player = game.round % 2 === 1 ? game.playerOne : game.playerTwo;
+}
 </script>
 
 <template>

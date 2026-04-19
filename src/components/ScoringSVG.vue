@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   type Context,
+  getPlayerScores,
   getScoreForPlayer,
   getWinner,
   type Scoring,
@@ -34,14 +35,22 @@ type ScoreViz = {
   underline?: boolean;
   highlight?: boolean;
 };
-const playerOneScoreBoard = ref([] as ScoreViz[]);
-const playerTwoScoreBoard = ref([] as ScoreViz[]);
+const playerScoreBoard = ref([] as [string, ScoreViz[]][]);
+const width = ref(200);
 const length = ref(200);
 
 function updateScores() {
   const scoring = props.context.scoring;
 
-  const groups = Object.groupBy(scoring, (s) => s.player);
+  width.value = props.context.players.length * 100;
+
+  const groups = props.context.players.reduce<Record<string, Scoring[]>>(
+    (acc, player) => {
+      acc[player] = scoring.filter((s) => s.player === player);
+      return acc;
+    },
+    {},
+  );
 
   const mapper =
     (lastRound: number) => (value: Scoring, index: number, arr: Scoring[]) => {
@@ -54,27 +63,22 @@ function updateScores() {
       };
     };
 
-  const player1 = props.context.players[0];
-  const player2 = props.context.players[1];
   const lastRound = scoring.length > 0 ? scoring[scoring.length - 1].round : 0;
-  playerOneScoreBoard.value = groups[player1]?.map(mapper(lastRound)) ?? [];
-  playerTwoScoreBoard.value = groups[player2]?.map(mapper(lastRound)) ?? [];
+
+  playerScoreBoard.value = Object.entries(groups).map(([player, values]) => [
+    player,
+    values!.map(mapper(lastRound)) ?? [],
+  ]);
 
   const numberOfItems = Math.max(
-    playerOneScoreBoard.value.length,
-    playerTwoScoreBoard.value.length,
+    ...Object.values(groups).map((values) => values!.length),
   );
   length.value = Math.max(50 + numberOfItems * 15, 100);
 }
 
 updateScores();
 
-const playerOneScore = computed(() =>
-  getScoreForPlayer(props.context.players[0], props.context.scoring),
-);
-const playerTwoScore = computed(() =>
-  getScoreForPlayer(props.context.players[1], props.context.scoring),
-);
+const playerScores = getPlayerScores(props.context, "map");
 const winner = computed(() => getWinner(props.context));
 
 const vHighlight = (el: SVGTextElement, binding: { value: boolean }) => {
@@ -92,7 +96,7 @@ const vHighlight = (el: SVGTextElement, binding: { value: boolean }) => {
   <svg
     :id="props.id"
     xmlns="http://www.w3.org/2000/svg"
-    :viewBox="`0 0 200 ` + length"
+    :viewBox="`0 0 ${width} ${length}`"
     fill="currentColor"
     font-size="12"
     text-anchor="end"
@@ -105,69 +109,61 @@ const vHighlight = (el: SVGTextElement, binding: { value: boolean }) => {
     <rect
       x="1"
       y="1"
-      width="198"
+      :width="width - 2"
       :height="length - 2"
       rx="15"
       ry="15"
       fill-opacity="0.1"
     />
     <line x1="100" y1="1" x2="100" :y2="length - 1" />
-    <line x1="1" y1="20" x2="199" y2="20" />
-    <line x1="1" :y1="length - 20" x2="199" :y2="length - 20" />
-    <text
-      v-highlight="props.highlightWinner && winner === context.players[0]"
-      x="50"
-      y="15"
-      text-anchor="middle"
+    <line
+      v-if="props.context.players.length === 3"
+      x1="200"
+      y1="1"
+      x2="200"
+      :y2="length - 1"
+    />
+    <line x1="1" y1="20" :x2="width - 1" y2="20" />
+    <line x1="1" :y1="length - 20" :x2="width - 1" :y2="length - 20" />
+    <template
+      v-for="([player, data], playerIndex) in playerScoreBoard"
+      :key="playerIndex"
     >
-      {{ context.players[0] }}
-    </text>
-    <text
-      v-highlight="props.highlightWinner && winner === context.players[1]"
-      x="150"
-      y="15"
-      text-anchor="middle"
-    >
-      {{ context.players[1] }}
-    </text>
-    <template v-for="(value, index) in playerOneScoreBoard" :key="index">
-      <text v-highlight="value.highlight" x="60" :y="35 + index * 15">
-        {{ $t("value", { value: value.value }) }}
+      <text
+        v-highlight="props.highlightWinner && winner === player"
+        :x="50 + playerIndex * 100"
+        y="15"
+        text-anchor="middle"
+      >
+        {{ player }}
       </text>
-      <line
-        v-if="value.underline"
-        x1="30"
-        :y1="38 + index * 15"
-        x2="70"
-        :y2="38 + index * 15"
-      />
-    </template>
-    <template v-for="(value, index) in playerTwoScoreBoard" :key="index">
-      <text v-highlight="value.highlight" x="160" :y="35 + index * 15">
-        {{ $t("value", { value: value.value }) }}
+      <template
+        v-for="({ value, highlight, underline }, index) in data"
+        :key="index"
+      >
+        <text
+          v-highlight="highlight"
+          :x="60 + playerIndex * 100"
+          :y="35 + index * 15"
+        >
+          {{ $t("value", { value }) }}
+        </text>
+        <line
+          v-if="underline"
+          :x1="30 + playerIndex * 100"
+          :y1="38 + index * 15"
+          :x2="70 + playerIndex * 100"
+          :y2="38 + index * 15"
+        />
+      </template>
+      <text
+        v-highlight="props.highlightWinner && winner === player"
+        :x="60 + playerIndex * 100"
+        :y="length - 6"
+      >
+        {{ playerScores[player] ?? 0 }}
       </text>
-      <line
-        v-if="value.underline"
-        x1="130"
-        :y1="38 + index * 15"
-        x2="170"
-        :y2="38 + index * 15"
-      />
     </template>
-    <text
-      v-highlight="props.highlightWinner && winner === context.players[0]"
-      x="60"
-      :y="length - 6"
-    >
-      {{ playerOneScore }}
-    </text>
-    <text
-      v-highlight="props.highlightWinner && winner === context.players[1]"
-      x="160"
-      :y="length - 6"
-    >
-      {{ playerTwoScore }}
-    </text>
   </svg>
 </template>
 

@@ -9,7 +9,7 @@ export type Scoring = {
 };
 
 export interface Context {
-  players: string[];
+  players: [] | [string, string] | [string, string, string];
   scoring: Scoring[];
   game?: {
     round: number;
@@ -30,7 +30,7 @@ function createContext(): Context {
 type Events =
   | { type: "show-history" }
   | { type: "new-game" }
-  | { type: "start-game"; one: string; two: string }
+  | { type: "start-game"; players: [string, string] | [string, string, string] }
   | { type: "round-ending" }
   | { type: "end-round-by"; player: string }
   | { type: "end-round-with-knock" }
@@ -60,16 +60,36 @@ export function getScoreForPlayer(player: string, scoring: Context["scoring"]) {
     }, 0);
 }
 
-export function getPlayerScores(context: Context) {
-  return context.players.map((p) => ({
+export function getPlayerScores(
+  context: Context,
+  type: "map",
+): Record<string, number>;
+export function getPlayerScores(
+  context: Context,
+  type: "sorted-list" | "list",
+): { player: string; score: number }[];
+export function getPlayerScores(
+  context: Context,
+  type: "sorted-list" | "list" | "map",
+) {
+  const list = context.players.map((p) => ({
     player: p,
     score: getScoreForPlayer(p, context.scoring),
   }));
+  if (type === "map") {
+    return list.reduce<Record<string, number>>((acc, { player, score }) => {
+      acc[player] = score;
+      return acc;
+    }, {});
+  } else if (type === "sorted-list") {
+    return list.toSorted((a, b) => b.score - a.score);
+  } else {
+    return list;
+  }
 }
 
 export function getWinner(context: Context) {
-  return getPlayerScores(context).toSorted((a, b) => b.score - a.score)[0]
-    .player;
+  return getPlayerScores(context, "sorted-list")[0].player;
 }
 
 const gameMachine = setup({
@@ -80,7 +100,7 @@ const gameMachine = setup({
   },
   guards: {
     noPlayerWon: ({ context }) =>
-      getPlayerScores(context).every((ps) => ps.score < 100),
+      getPlayerScores(context, "list").every((ps) => ps.score < 100),
   },
 }).createMachine({
   id: "app",
@@ -104,11 +124,11 @@ const gameMachine = setup({
         "start-game": {
           actions: assign({
             game: ({ event }) => ({
-              playerOne: event.one,
-              playerTwo: event.two,
+              playerOne: event.players[0],
+              playerTwo: event.players[1],
               round: 1,
             }),
-            players: ({ event }) => [event.one, event.two],
+            players: ({ event }) => event.players,
           }),
           target: "game",
         },
@@ -267,12 +287,29 @@ const gameMachine = setup({
               target: "roundRunning",
               guard: "noPlayerWon",
               actions: assign({
-                game: ({ context: { game } }) => ({
-                  ...game!,
-                  roundEndedBy: undefined,
-                  firstPlayerDeadWood: undefined,
-                  round: game!.round + 1,
-                }),
+                game: ({ context: { game, players } }) => {
+                  if (players.length === 2) {
+                    return {
+                      playerOne: game!.playerOne,
+                      playerTwo: game!.playerTwo,
+                      round: game!.round + 1,
+                    };
+                  } else {
+                    const winner = game!.roundEndedBy!;
+                    const loser =
+                      winner === game!.playerOne
+                        ? game!.playerTwo!
+                        : game!.playerOne!;
+                    const otherPlayer = players.find(
+                      (p) => p !== winner && p !== loser,
+                    )!;
+                    return {
+                      playerOne: winner,
+                      playerTwo: otherPlayer,
+                      round: game!.round + 1,
+                    };
+                  }
+                },
               }),
             },
             { target: "gameOver" },
@@ -287,7 +324,6 @@ const gameMachine = setup({
           ({ context: { players, scoring } }) => {
             saveGame(players, scoring);
           },
-          assign(() => createContext()),
         ],
       },
     },

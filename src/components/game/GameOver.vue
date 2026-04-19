@@ -2,14 +2,14 @@
 import confetti from "canvas-confetti";
 import { onBeforeUnmount, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { type Context, getPlayerScores } from "../../game-machine";
+import { type Context, getPlayerScores, getWinner } from "../../game-machine";
 import ScoringSVG from "../ScoringSVG.vue";
 
 const { t: $t } = useI18n();
 
 const props = defineProps({
   context: {
-    type: Object as () => Pick<Context, "players" | "scoring">,
+    type: Object as () => Context,
     required: true,
   },
 });
@@ -18,21 +18,14 @@ defineEmits<{
   (e: "back-to-title"): void;
 }>();
 
-const playerScores = getPlayerScores(props.context);
-const namePlayerOne = props.context.players[0];
-const namePlayerTwo = props.context.players[1];
-const pointsPlayerOne = playerScores.find(
-  (s) => s.player === namePlayerOne,
-)!.score;
-const pointsPlayerTwo = playerScores.find(
-  (s) => s.player === namePlayerTwo,
-)!.score;
+const playerScores = getPlayerScores(props.context, "map");
+const winningPlayer = getWinner(props.context);
 
 type Player = { name: string; score: number };
-const winner: Player =
-  pointsPlayerOne > pointsPlayerTwo
-    ? { name: namePlayerOne, score: pointsPlayerOne }
-    : { name: namePlayerTwo, score: pointsPlayerTwo };
+const winner: Player = {
+  name: winningPlayer,
+  score: playerScores[winningPlayer],
+};
 
 const confettiSettings = () => ({
   particleCount: Math.random() * 100 + 50,
