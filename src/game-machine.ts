@@ -4,27 +4,26 @@ import { saveGame } from "./game-history";
 
 export type Scoring = {
   round: number;
-  player: 1 | 2;
+  player: string;
   score: "undercut" | "gin" | "big-gin" | number;
 };
 
 export interface Context {
-  playerOne: string | null;
-  playerTwo: string | null;
+  players: string[];
   scoring: Scoring[];
-  round: number;
-  roundEndedBy?: 1 | 2;
-  firstPlayerDeadWood?: number;
+  game?: {
+    round: number;
+    playerOne: string;
+    playerTwo: string;
+    roundEndedBy?: string;
+    firstPlayerDeadWood?: number;
+  };
 }
 
 function createContext(): Context {
   return {
-    playerOne: null,
-    playerTwo: null,
+    players: [],
     scoring: [],
-    round: 0,
-    roundEndedBy: undefined,
-    firstPlayerDeadWood: undefined,
   };
 }
 
@@ -33,18 +32,18 @@ type Events =
   | { type: "new-game" }
   | { type: "start-game"; one: string; two: string }
   | { type: "round-ending" }
-  | { type: "end-round-by"; player: 1 | 2 }
+  | { type: "end-round-by"; player: string }
   | { type: "end-round-with-knock" }
   | { type: "end-round-with-gin" }
   | { type: "end-round-with-big-gin" }
-  | { type: "counted-dead-wood"; player: 1 | 2; value: number }
+  | { type: "counted-dead-wood"; player: string; value: number }
   | { type: "continue-game" }
   | { type: "correct-score" }
   | { type: "back-to-title" };
 
 type Tags = "display-scoreboard-link";
 
-export function getScoreForPlayer(player: 1 | 2, scoring: Context["scoring"]) {
+export function getScoreForPlayer(player: string, scoring: Context["scoring"]) {
   return scoring
     .filter((s) => s.player === player)
     .reduce((acc, s) => {
@@ -61,15 +60,16 @@ export function getScoreForPlayer(player: 1 | 2, scoring: Context["scoring"]) {
     }, 0);
 }
 
-export function getWinner(scoring: Context["scoring"]) {
-  const playerOneScore = getScoreForPlayer(1, scoring);
-  const playerTwoScore = getScoreForPlayer(2, scoring);
+export function getPlayerScores(context: Context) {
+  return context.players.map((p) => ({
+    player: p,
+    score: getScoreForPlayer(p, context.scoring),
+  }));
+}
 
-  if (playerOneScore > playerTwoScore) {
-    return 1;
-  } else {
-    return 2;
-  }
+export function getWinner(context: Context) {
+  return getPlayerScores(context).toSorted((a, b) => b.score - a.score)[0]
+    .player;
 }
 
 const gameMachine = setup({
@@ -79,9 +79,8 @@ const gameMachine = setup({
     tags: {} as Tags,
   },
   guards: {
-    noPlayerWon: ({ context: { scoring } }) =>
-      getScoreForPlayer(1, scoring) < 100 &&
-      getScoreForPlayer(2, scoring) < 100,
+    noPlayerWon: ({ context }) =>
+      getPlayerScores(context).every((ps) => ps.score < 100),
   },
 }).createMachine({
   id: "app",
@@ -104,9 +103,12 @@ const gameMachine = setup({
       on: {
         "start-game": {
           actions: assign({
-            playerOne: ({ event }) => event.one,
-            playerTwo: ({ event }) => event.two,
-            round: ({ context }) => context.round + 1,
+            game: ({ event }) => ({
+              playerOne: event.one,
+              playerTwo: event.two,
+              round: 1,
+            }),
+            players: ({ event }) => [event.one, event.two],
           }),
           target: "game",
         },
@@ -128,7 +130,10 @@ const gameMachine = setup({
           on: {
             "end-round-by": {
               actions: assign({
-                roundEndedBy: ({ event }) => event.player,
+                game: ({ context: { game }, event }) => ({
+                  ...game!,
+                  roundEndedBy: event.player,
+                }),
               }),
               target: "roundEndSelection",
             },
@@ -139,11 +144,11 @@ const gameMachine = setup({
           on: {
             "end-round-with-gin": {
               actions: assign({
-                scoring: ({ context }) => [
-                  ...context.scoring,
+                scoring: ({ context: { scoring, game } }) => [
+                  ...scoring,
                   {
-                    round: context.round,
-                    player: context.roundEndedBy!,
+                    round: game!.round,
+                    player: game!.roundEndedBy!,
                     score: "gin",
                   },
                 ],
@@ -152,11 +157,11 @@ const gameMachine = setup({
             },
             "end-round-with-big-gin": {
               actions: assign({
-                scoring: ({ context }) => [
-                  ...context.scoring,
+                scoring: ({ context: { scoring, game } }) => [
+                  ...scoring,
                   {
-                    round: context.round,
-                    player: context.roundEndedBy!,
+                    round: game!.round,
+                    player: game!.roundEndedBy!,
                     score: "big-gin",
                   },
                 ],
@@ -173,11 +178,11 @@ const gameMachine = setup({
           on: {
             "counted-dead-wood": {
               actions: assign({
-                scoring: ({ context, event }) => [
-                  ...context.scoring,
+                scoring: ({ context: { scoring, game }, event }) => [
+                  ...scoring,
                   {
-                    round: context.round,
-                    player: context.roundEndedBy!,
+                    round: game!.round,
+                    player: game!.roundEndedBy!,
                     score: event.value,
                   },
                 ],
@@ -191,7 +196,10 @@ const gameMachine = setup({
           on: {
             "counted-dead-wood": {
               actions: assign({
-                firstPlayerDeadWood: ({ event }) => event.value,
+                game: ({ context: { game }, event }) => ({
+                  ...game!,
+                  firstPlayerDeadWood: event.value,
+                }),
               }),
               target: "countSecondPlayerDeadWood",
             },
@@ -202,31 +210,34 @@ const gameMachine = setup({
           on: {
             "counted-dead-wood": {
               actions: assign({
-                scoring: ({ context, event }) => {
-                  const firstPlayer = context.roundEndedBy!;
-                  const secondPlayer = firstPlayer === 1 ? 2 : 1;
-                  const firstPlayerDeadWood = context.firstPlayerDeadWood!;
+                scoring: ({ context: { game, scoring }, event }) => {
+                  const firstPlayer = game!.roundEndedBy!;
+                  const secondPlayer =
+                    firstPlayer === game!.playerOne
+                      ? game!.playerTwo!
+                      : game!.playerOne!;
+                  const firstPlayerDeadWood = game!.firstPlayerDeadWood!;
                   const secondPlayerDeadWood = event.value;
 
                   if (firstPlayerDeadWood < secondPlayerDeadWood) {
                     return [
-                      ...context.scoring,
+                      ...scoring,
                       {
-                        round: context.round,
+                        round: game!.round,
                         player: firstPlayer,
                         score: secondPlayerDeadWood - firstPlayerDeadWood,
                       },
                     ];
                   } else {
                     return [
-                      ...context.scoring,
+                      ...scoring,
                       {
-                        round: context.round,
+                        round: game!.round,
                         player: secondPlayer,
                         score: "undercut",
                       },
                       {
-                        round: context.round,
+                        round: game!.round,
                         player: secondPlayer,
                         score: firstPlayerDeadWood - secondPlayerDeadWood,
                       },
@@ -243,8 +254,8 @@ const gameMachine = setup({
             "continue-game": "continueGame",
             "correct-score": {
               actions: assign({
-                scoring: ({ context }) =>
-                  context.scoring.filter((s) => s.round !== context.round),
+                scoring: ({ context: { scoring, game } }) =>
+                  scoring.filter((s) => s.round !== game!.round),
               }),
               target: "roundEnding",
             },
@@ -256,9 +267,12 @@ const gameMachine = setup({
               target: "roundRunning",
               guard: "noPlayerWon",
               actions: assign({
-                roundEndedBy: () => undefined,
-                firstPlayerDeadWood: () => undefined,
-                round: ({ context }) => context.round + 1,
+                game: ({ context: { game } }) => ({
+                  ...game!,
+                  roundEndedBy: undefined,
+                  firstPlayerDeadWood: undefined,
+                  round: game!.round + 1,
+                }),
               }),
             },
             { target: "gameOver" },
@@ -269,9 +283,12 @@ const gameMachine = setup({
         },
       },
       onDone: {
-        actions: ({ context }) => {
-          saveGame(context);
-        },
+        actions: [
+          ({ context: { players, scoring } }) => {
+            saveGame(players, scoring);
+          },
+          assign(() => createContext()),
+        ],
       },
     },
   },

@@ -5,12 +5,11 @@ import { type Context } from "../../game-machine";
 const { t: $t } = useI18n();
 
 defineProps({
-  context: { type: Object as () => Context, required: true },
+  context: { type: Object as () => Required<Context>["game"], required: true },
 });
 
 const emit = defineEmits<{
-  (e: "player-one-ends"): void;
-  (e: "player-two-ends"): void;
+  (e: "player-ends", name: string): void;
 }>();
 </script>
 
@@ -18,10 +17,10 @@ const emit = defineEmits<{
   <h1>{{ $t("round-ended", { round: context.round }) }}</h1>
   <div>
     <h2>{{ $t("who-ended") }}</h2>
-    <button @click="emit('player-one-ends')">
+    <button @click="emit('player-ends', context.playerOne)">
       {{ context.playerOne }}
     </button>
-    <button @click="emit('player-two-ends')">
+    <button @click="emit('player-ends', context.playerTwo)">
       {{ context.playerTwo }}
     </button>
   </div>

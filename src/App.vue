@@ -22,11 +22,15 @@ function send(event: Parameters<typeof sendToMachine>[0]) {
     sendToMachine(event);
   });
 }
-function endingPlayer(context: Context) {
-  return context.roundEndedBy === 1 ? context.playerOne! : context.playerTwo!;
+function endingPlayer(game: Required<Context>["game"]) {
+  return game.roundEndedBy === game.playerOne
+    ? game.playerOne!
+    : game.playerTwo!;
 }
-function otherPlayer(context: Context) {
-  return context.roundEndedBy === 1 ? context.playerTwo! : context.playerOne!;
+function otherPlayer(game: Required<Context>["game"]) {
+  return game.roundEndedBy === game.playerOne
+    ? game.playerTwo!
+    : game.playerOne!;
 }
 const displayScoreBoard = ref(false);
 function toggleScoreboard() {
@@ -75,58 +79,67 @@ function reset() {
     />
     <RoundRunning
       v-else-if="snapshot.matches({ game: 'roundRunning' })"
-      :context="snapshot.context"
+      :context="snapshot.context.game!"
       @round-ends="send({ type: 'round-ending' })"
     />
     <RoundEnding
       v-else-if="snapshot.matches({ game: 'roundEnding' })"
-      :context="snapshot.context"
-      @player-one-ends="send({ type: 'end-round-by', player: 1 })"
-      @player-two-ends="send({ type: 'end-round-by', player: 2 })"
+      :context="snapshot.context.game!"
+      @player-ends="(player) => send({ type: 'end-round-by', player })"
     />
     <RoundEndSelection
       v-else-if="snapshot.matches({ game: 'roundEndSelection' })"
-      :player="endingPlayer(snapshot.context)"
+      :player="endingPlayer(snapshot.context.game!)"
       @knock="send({ type: 'end-round-with-knock' })"
       @gin="send({ type: 'end-round-with-gin' })"
       @big-gin="send({ type: 'end-round-with-big-gin' })"
     />
     <CountDeadWood
       v-else-if="snapshot.matches({ game: 'countOtherPlayerDeadWood' })"
-      :player="otherPlayer(snapshot.context)"
+      :player="otherPlayer(snapshot.context.game!)"
       @dead-wood-counted="
-        (value) =>
+        (value) => {
+          const game = snapshot.context.game!;
           send({
             type: 'counted-dead-wood',
-            player: snapshot.context.roundEndedBy === 1 ? 2 : 1,
+            player:
+              game.roundEndedBy === game.playerOne
+                ? game.playerTwo
+                : game.playerOne,
             value,
-          })
+          });
+        }
       "
     />
     <CountDeadWood
       v-else-if="snapshot.matches({ game: 'countFirstPlayerDeadWood' })"
-      :player="endingPlayer(snapshot.context)"
+      :player="endingPlayer(snapshot.context.game!)"
       @dead-wood-counted="
         (value) =>
           send({
             type: 'counted-dead-wood',
-            player: snapshot.context.roundEndedBy!,
+            player: snapshot.context.game!.roundEndedBy!,
             value,
           })
       "
     />
     <CountDeadWood
       v-else-if="snapshot.matches({ game: 'countSecondPlayerDeadWood' })"
-      :player="otherPlayer(snapshot.context)"
+      :player="otherPlayer(snapshot.context.game!)"
       :allow-zero="true"
       :can-place-cards="true"
       @dead-wood-counted="
-        (value) =>
+        (value) => {
+          const game = snapshot.context.game!;
           send({
             type: 'counted-dead-wood',
-            player: snapshot.context.roundEndedBy === 1 ? 2 : 1,
+            player:
+              game.roundEndedBy === game.playerOne
+                ? game.playerTwo
+                : game.playerOne,
             value,
-          })
+          });
+        }
       "
     />
     <FinalizeRound

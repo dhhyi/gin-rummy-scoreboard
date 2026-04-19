@@ -1,7 +1,7 @@
 import { computed, ref, watch } from "vue";
-import { getScoreForPlayer, type Context } from "./game-machine";
+import { getPlayerScores, type Context } from "./game-machine";
 
-type HistoryContext = Context & { date: number };
+type HistoryContext = Pick<Context, "players" | "scoring"> & { date: number };
 
 const localStorageHistoryKey = "gin-rummy-scoreboard-history";
 
@@ -24,8 +24,11 @@ watch(history, (newHistory) => {
   localStorage.setItem(localStorageHistoryKey, JSON.stringify(newHistory));
 });
 
-export function saveGame(context: Context) {
-  history.value = [{ ...context, date: Date.now() }, ...history.value];
+export function saveGame(
+  players: Context["players"],
+  scoring: Context["scoring"],
+) {
+  history.value = [{ players, scoring, date: Date.now() }, ...history.value];
 }
 
 export function deleteHistoryEntry(index: number) {
@@ -36,13 +39,18 @@ export function deleteHistoryEntry(index: number) {
 export const statistics = computed(() => {
   return history.value.reduce<Record<string, { one: number; two: number }>>(
     (acc, game) => {
-      const { playerOne, playerTwo, scoring } = game;
-      const title = `${playerOne} - ${playerTwo}`;
+      const { players } = game;
+      const title = players.join(" - ");
       if (!acc[title]) {
         acc[title] = { one: 0, two: 0 };
       }
-      const playerOneScore = getScoreForPlayer(1, scoring);
-      const playerTwoScore = getScoreForPlayer(2, scoring);
+      const playerScoring = getPlayerScores(game);
+      const playerOneScore = playerScoring.find(
+        (s) => s.player === players[0],
+      )!.score;
+      const playerTwoScore = playerScoring.find(
+        (s) => s.player === players[1],
+      )!.score;
       if (playerOneScore > playerTwoScore) {
         acc[title].one += 1;
       } else {

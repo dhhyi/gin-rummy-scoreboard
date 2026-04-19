@@ -5,7 +5,7 @@ import { type Context } from "../../game-machine";
 const { t: $t } = useI18n();
 
 const props = defineProps({
-  context: { type: Object as () => Context, required: true },
+  context: { type: Object as () => Required<Context>["game"], required: true },
 });
 
 const emit = defineEmits<{
@@ -24,7 +24,7 @@ const player =
 </script>
 
 <template>
-  <h1>{{ $t("round-running", { round: context.round }) }}</h1>
+  <h1>{{ $t("round-running", { round: game.round }) }}</h1>
   <div>
     <h2>{{ $t("dealer-message", { dealer }) }}</h2>
     <h2>{{ $t("player-message", { player }) }}</h2>

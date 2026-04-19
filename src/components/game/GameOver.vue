@@ -2,14 +2,14 @@
 import confetti from "canvas-confetti";
 import { onBeforeUnmount, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { type Context, getScoreForPlayer } from "../../game-machine";
+import { type Context, getPlayerScores } from "../../game-machine";
 import ScoringSVG from "../ScoringSVG.vue";
 
 const { t: $t } = useI18n();
 
 const props = defineProps({
   context: {
-    type: Object as () => Context,
+    type: Object as () => Pick<Context, "players" | "scoring">,
     required: true,
   },
 });
@@ -18,11 +18,15 @@ defineEmits<{
   (e: "back-to-title"): void;
 }>();
 
-const scoring = props.context.scoring;
-const pointsPlayerOne = getScoreForPlayer(1, scoring);
-const pointsPlayerTwo = getScoreForPlayer(2, scoring);
-const namePlayerOne = props.context.playerOne!;
-const namePlayerTwo = props.context.playerTwo!;
+const playerScores = getPlayerScores(props.context);
+const namePlayerOne = props.context.players[0];
+const namePlayerTwo = props.context.players[1];
+const pointsPlayerOne = playerScores.find(
+  (s) => s.player === namePlayerOne,
+)!.score;
+const pointsPlayerTwo = playerScores.find(
+  (s) => s.player === namePlayerTwo,
+)!.score;
 
 type Player = { name: string; score: number };
 const winner: Player =
