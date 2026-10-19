@@ -32,6 +32,20 @@ function clickEntry(index: number) {
   <button class="nav" @click="$emit('back')">{{ $t("back") }}</button>
   <h1>{{ $t("game-history") }}</h1>
   <div v-if="history.length" class="last:pb-8">
+    <h2 class="mt-4 font-bold">{{ $t("statistics") }}</h2>
+    <div
+      v-for="(stats, title) in statistics"
+      :key="title"
+      class="flex flex-col justify-center gap-1"
+    >
+      <span class="font-bold">{{ title }}</span>
+      <span v-if="stats.length === 2">{{
+        $t("vs2", { one: stats[0], two: stats[1] })
+      }}</span>
+      <span v-else>{{
+        $t("vs3", { one: stats[0], two: stats[1], three: stats[2] })
+      }}</span>
+    </div>
     <div
       v-for="(entry, index) in history"
       :key="index"
@@ -47,20 +61,6 @@ function clickEntry(index: number) {
     <p class="text-xs">
       {{ $t("click-to-delete") }}
     </p>
-    <h2 class="mt-4 font-bold">{{ $t("statistics") }}</h2>
-    <div
-      v-for="(stats, title) in statistics"
-      :key="title"
-      class="flex flex-col justify-center gap-1"
-    >
-      <span class="font-bold">{{ title }}</span>
-      <span v-if="stats.length === 2">{{
-        $t("vs2", { one: stats[0], two: stats[1] })
-      }}</span>
-      <span v-else>{{
-        $t("vs3", { one: stats[0], two: stats[1], three: stats[2] })
-      }}</span>
-    </div>
   </div>
   <p v-else>{{ $t("no-history") }}</p>
 </template>
