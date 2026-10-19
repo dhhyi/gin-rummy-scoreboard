@@ -3,8 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.14.0",
+      "onFail": "download"
+    }
+  },
   "scripts": {
-    "postinstall": "echo 'node node_modules/pre-commit && git update-index --again' > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
+    "postinstall": "echo 'pnpm format && pnpm lint && git update-index --again' > .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit",
     "generate-icons": "svg2png -c svg2png.config.json -n '' -f src/assets/gin-rummy-scoreboard.svg",
     "dev": "vite --host 0.0.0.0",
     "build": "vue-tsc -b && vite build",
@@ -12,10 +19,6 @@
     "lint": "eslint . --ext .js,.ts,.vue --fix --max-warnings=0",
     "format": "prettier --log-level warn --write ."
   },
-  "pre-commit": [
-    "format",
-    "lint"
-  ],
   "dependencies": {
     "@tailwindcss/vite": "^4.3.1",
     "@xstate/vue": "^5.0.0",
@@ -41,7 +44,6 @@
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-vue": "^10.9.2",
     "globals": "^17.6.0",
-    "pre-commit": "^2.0.0",
     "prettier": "^3.8.4",
     "prettier-plugin-sh": "^0.18.1",
     "prettier-plugin-tailwindcss": "^0.8.0",

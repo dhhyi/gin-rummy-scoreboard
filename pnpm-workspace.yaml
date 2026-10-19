@@ -1,7 +1,3 @@
-ignoredBuiltDependencies:
-  - spawn-sync
-
-onlyBuiltDependencies:
-  - "@tailwindcss/oxide"
-  - esbuild
-  - pre-commit
+allowBuilds:
+  esbuild: true
+  pre-commit: true

@@ -10,6 +10,7 @@ lerna-debug.log*
 public/img/*
 public/favicon.png
 node_modules
+.pnpm-store
 dist
 dist-ssr
 *.local

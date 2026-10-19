@@ -1,4 +1,6 @@
 [tools]
-node = "24"
-pnpm = "latest"
+node = "26"
 java = "21"
+
+[settings]
+idiomatic_version_file_enable_tools = ["pnpm"]

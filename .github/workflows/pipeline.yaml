@@ -34,6 +34,16 @@ jobs:
           docker volume create --driver=local -o type=none -o device=$PWD/playwright-cache.local -o o=bind playwright-cache
           docker inspect playwright-cache
 
+      - uses: actions/cache@v4
+        with:
+          path: mise-cache.local
+          key: ${{ runner.os }}-mise-cache
+
+      - run: |
+          mkdir -p mise-cache.local
+          docker volume create --driver=local -o type=none -o device=$PWD/mise-cache.local -o o=bind mise-cache
+          docker inspect mise-cache
+
       - run: |
           cat <<EOF > build.sh
           #!/bin/sh
@@ -46,7 +56,7 @@ jobs:
           echo "::endgroup::"
 
           echo "::group::Generate Icons"
-          PATH="$PATH:/home/ubuntu/.local/share/mise/shims" pnpm run generate-icons
+          pnpm run generate-icons
           echo "::endgroup::"
 
           echo "::group::Build"
