@@ -3,6 +3,7 @@
   "name": "gin-rummy-scoreboard",
   "runArgs": ["--name", "gin-rummy-scoreboard-${devcontainerId}"],
   "mounts": [
+    "type=volume,target=/home/vscode/.local/state/lazygit,source=lazygit-history-gin-rummy-scoreboard",
     "type=volume,target=${containerWorkspaceFolder}/node_modules,source=gin-rummy-scoreboard-node-modules",
     "type=volume,target=${containerWorkspaceFolder}/.pnpm-store,source=pnpm-store",
     "type=volume,target=/home/vscode/.cache/ms-playwright,source=playwright-cache",
